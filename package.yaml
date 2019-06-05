@@ -24,6 +24,11 @@ dependencies:
 - text
 - bytestring
 - string-conv
+- containers
+
+ghc-options:
+  - -W
+  - -Werror
 
 library:
   source-dirs: src
