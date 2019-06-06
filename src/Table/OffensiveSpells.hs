@@ -23,6 +23,7 @@ data Spell =
 
 -- Effects model ancillary things that aren't direct damage (debuffs)
 data Effect = Effect
+  deriving (Eq, Ord, Show)
 
 
 {- NOTES
@@ -38,6 +39,7 @@ data SpellResult =
     { damage  :: Float
     , effects :: [Effect]
     }
+  deriving (Eq, Ord, Show)
 
 instance Semigroup SpellResult where
   a <> b =
@@ -50,13 +52,13 @@ miss :: SpellResult
 miss = SpellResult {damage = 0, effects = []}
 
 hitChance :: Spell -> Float
-hitChance s = max 0.99 $ baseHit + hits
+hitChance s = min 0.99 $ baseHit + hits
   where
     diff = (tLvl s) - (cLvl s)
     hits = hit s
     baseHit
       | diff >= 3 = 0.83
-      | otherwise = 96 - diff
+      | otherwise = (96 - diff) / 100
       -- | diff == 2 = 94
       -- | diff == 1 = 95
       -- | diff == 0 = 96
@@ -69,8 +71,8 @@ cast spell stats res
   -- miss, hit, crit
   Prob
     [ (mempty, 1 - hits)
-    , (mempty {damage = hitDmg * avgRes}, crits)
-    , (mempty {damage = critDmg * avgRes}, hits - crits)
+    , (mempty {damage = hitDmg * avgRes}, hits - crits)
+    , (mempty {damage = critDmg * avgRes}, crits)
     ]
   where
     school' = school spell

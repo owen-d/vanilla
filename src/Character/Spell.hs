@@ -17,6 +17,21 @@ data Stats =
     , crit    :: Float
     }
 
+base :: Stats
+base =
+  Stats
+    { arcane = 0
+    , fire = 0
+    , frost = 0
+    , holy = 0
+    , nature = 0
+    , shadow = 0
+    , healing = 0
+    , hit = 0
+    , pen = 0
+    , crit = 0
+    }
+
 data School
   = Arcane
   | Fire
