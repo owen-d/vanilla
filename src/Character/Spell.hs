@@ -2,6 +2,8 @@
 
 module Character.Spell where
 
+import           Spells.Spell (School (..))
+
 -- TODO: hit/crit should be affectable at the school and spell level, not just at the character-sheet
 data Stats =
   Stats
@@ -31,14 +33,6 @@ base =
     , pen = 0
     , crit = 0
     }
-
-data School
-  = Arcane
-  | Fire
-  | Frost
-  | Holy
-  | Nature
-  | Shadow
 
 spellPower :: School -> Stats -> Float
 spellPower s =

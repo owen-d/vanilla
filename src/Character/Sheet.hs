@@ -5,6 +5,7 @@ module Character.Sheet where
 import           Character.Defenses    (Defenses (..))
 import qualified Character.Phys        as Phys
 import           Character.Resistances (Resistances (..))
+import qualified Character.Spell       as Spell
 import           Data.Text             as T
 
 data Character =
@@ -18,9 +19,9 @@ data Character =
     , spirit      :: Float
     , resistances :: Resistances
     , defenses    :: Defenses
-    , melee       :: Phys.Stats
-    , ranged      :: Phys.Stats
-    , spell       :: Spell.Stats
+    , meleeStats  :: Phys.Stats
+    , rangedStats :: Phys.Stats
+    , spellStats  :: Spell.Stats
     , guild       :: Maybe T.Text
     }
 

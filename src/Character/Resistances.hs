@@ -1,6 +1,6 @@
 module Character.Resistances where
 
-import           Character.Spell (School (..))
+import           Spells.Spell (School (..))
 
 data Resistances =
   Resistances
