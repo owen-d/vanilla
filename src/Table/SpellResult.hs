@@ -16,9 +16,10 @@ data SpellResult =
     { dmg      :: Float
     , resolved :: SpellResolve
     }
+  deriving (Show, Eq)
 
 data SpellResolve = Miss | Hit | Crit
-  deriving Eq
+  deriving (Show, Eq)
 
 -- always prefer crit then hit then miss. Keeps track of best result
 instance Semigroup SpellResolve where
@@ -82,9 +83,10 @@ harmfulCast s caster enemy@ Character{resistances=resists}=
     crits = (SpellResult{dmg=critDmg + sum cfbs , resolved=Crit}, pCrit)
     hitDmg = (Sp.dmg spell) + (Sp.coeff spell * spellPower school' (spellStats caster))
     critDmg = hitDmg * Sp.critCoeff spell
-    avgRes = max 0.75 $ (resistance school' resists) / (level caster * 5) * 0.75
+    avgRes = min 0.75 $ (resistance school' resists) / (level caster * 5) * 0.75
+    resCoeff = 1 - avgRes
     mitigate xs = Prob $ flip map xs $ \(x, p) ->
-      (x{dmg=dmg x * avgRes}, p)
+      (x{dmg=dmg x * resCoeff}, p)
 
 -- modify applies all modifiers, returning the adjusted spell.
 modify :: Spell Character -> Character -> Character -> Spell Character
@@ -93,3 +95,9 @@ modify spell@Spell {Sp.modifiers = mods} caster target =
     [] -> spell
     (f:fs) -> modify spell' caster target
       where spell' = f spell {Sp.modifiers = fs} caster target
+
+-- expected returns the avg expected result for a spellresult distribution
+expected :: Prob SpellResult -> Float
+expected = avg . unProb
+  where
+    avg = foldr (\(SpellResult{dmg=x}, p) acc -> acc + x * p) 0
