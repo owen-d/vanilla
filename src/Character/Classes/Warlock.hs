@@ -5,7 +5,7 @@ import qualified Control.Applicative as Applicative
 import           Prob                (Prob (..))
 import           Spells.Spell        (SType (..), School (..), Spell (..),
                                       SpellClass (..), empty)
-import           Table.SpellResult   (SpellResult (SpellResult), cast)
+import           Table.SpellResult   (SpellResult (SpellResult), cast, expected)
 import qualified Table.SpellResult   as SpRes
 
 -- spells assume DS/Ruin w/ 2 pts in suppression
@@ -46,11 +46,6 @@ improvedSbMod spell@ Spell{critFlatBonuses=cfbs} caster target =
     baseResult = cast spell caster target -- get damage distribution
     bonus = bonusCoeff * (expected $ maxCritOnce baseResult charges)
 
--- expected returns the avg expected result for a spellresult distribution
-expected :: Prob SpellResult -> Float
-expected = avg . unProb
-  where
-    avg = foldr (\(SpellResult{SpRes.dmg=x}, p) acc -> acc + x * p) 0
 
 -- maxCritOnce takes SpellResult probability distribution and returns the probability distribution
 -- that includes up to one crit over the specified number of rounds
@@ -61,7 +56,7 @@ maxCritOnce dRound n = runRound dRound (n - 1)
     runRound d 0 = d
     runRound d n = do
       res@ SpellResult{SpRes.dmg=dmg, SpRes.resolved=t} <- d
-      SpellResult{SpRes.dmg=dmg', SpRes.resolved=t'} <- d
+      SpellResult{SpRes.dmg=dmg', SpRes.resolved=t'} <- dRound
       if SpRes.Crit == t
         then return res
         else

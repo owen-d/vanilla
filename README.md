@@ -12,3 +12,6 @@
 - raid comp determining probabilities (i.e. 4 warlocks means 50% probability of using curse of doom, whereas it's 0% for 2 locks due to curse of elements/shadow requirements)
   - This may be eventually exposed by a `RaidComp` type
 - currently rotations are hardcoded, i.e. Warlocks are assumed to use DS/Ruin. Eventually these will be parameterized by talents.
+
+## Shoutouts
+- http://web.engr.oregonstate.edu/~erwig/papers/PFP_JFP06.pdf
