@@ -8,7 +8,10 @@ import           Control.Monad       (forM_, guard)
 import qualified Data.Map            as M
 import           Text.Printf         (printf)
 
-newtype Prob a = Prob {unProb :: [(a, Float)]} deriving (Functor, Show)
+newtype Prob a = Prob {unProb :: [(a, Float)]} deriving (Functor)
+instance Show a => Show (Prob a) where
+  show (Prob xs) = concat $
+    flip map xs (\(x,p) -> printf "%.3f %s\n" p (show x))
 
 instance Applicative Prob where
     pure x              = Prob [(x, 1)]
