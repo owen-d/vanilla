@@ -1,6 +1,9 @@
+{-# LANGUAGE DeriveGeneric     #-}
 {-# LANGUAGE OverloadedStrings #-}
 
 module Character.Defenses where
+
+import           GHC.Generics (Generic)
 
 data Defenses =
   Defenses
@@ -10,6 +13,7 @@ data Defenses =
     , parry   :: Float
     , block   :: Float
     }
+  deriving (Show, Generic)
 
 instance Semigroup Defenses where
   a <> b =

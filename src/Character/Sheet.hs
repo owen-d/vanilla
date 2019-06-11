@@ -1,3 +1,4 @@
+{-# LANGUAGE DeriveGeneric     #-}
 {-# LANGUAGE OverloadedStrings #-}
 
 module Character.Sheet where
@@ -7,6 +8,7 @@ import qualified Character.Phys        as Phys
 import           Character.Resistances (Resistances (..))
 import qualified Character.Spell       as Spell
 import           Data.Text             as T
+import           GHC.Generics          (Generic)
 
 data Character =
   Character
@@ -24,6 +26,7 @@ data Character =
     , spellStats  :: Spell.Stats
     , guild       :: Maybe T.Text
     }
+  deriving (Show, Generic)
 
 data Race
   = Human
@@ -34,6 +37,7 @@ data Race
   | Tauren
   | Troll
   | Undead
+  deriving (Show, Generic)
 
 data CClass
   = Warrior
@@ -45,3 +49,4 @@ data CClass
   | Priest
   | Mage
   | Warlock
+  deriving (Show, Generic)

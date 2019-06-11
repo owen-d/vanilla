@@ -1,4 +1,10 @@
+{-# LANGUAGE DeriveGeneric #-}
+
+
 module Spells.Spell where
+
+
+import           GHC.Generics (Generic)
 
 data School
   = Arcane
@@ -7,13 +13,13 @@ data School
   | Holy
   | Nature
   | Shadow
-  deriving (Eq, Ord, Show)
+  deriving (Eq, Ord, Show, Generic)
 
 data SType = Direct | Duration | Buff
-  deriving (Eq, Ord, Show)
+  deriving (Eq, Ord, Show, Generic)
 
 data SpellClass = Harmful SType | Helpful SType
-  deriving (Eq, Ord, Show)
+  deriving (Eq, Ord, Show, Generic)
 
 direct = Harmful Direct
 dot = Harmful Duration
@@ -37,9 +43,19 @@ data Spell a =
     , critCoeff       :: Float
     , castTime        :: Float
     , critFlatBonuses :: [Float] -- added on to the end result. Used to simulate buffs like imp shadowbolt
-    , modifiers       :: [(Spell a -> a -> a -> Spell a)] -- for in place adjustments at calculation time
+    , modifiers       :: [Modifier a] -- for in place adjustments at calculation time
     -- i.e. taking gear into account for calc'ing improved shadowbolt's effect
     }
+  deriving (Show, Generic)
+
+-- newtype wrapper just for the Show instances. It'd be nice to have another way to do this :(
+newtype Modifier a = Modifier { unMod :: Spell a -> a -> a -> Spell a}
+
+instance Show (Modifier a) where
+  show = const "function"
+
+mkModifiers :: [Spell a -> a -> a -> Spell a] -> [Modifier a]
+mkModifiers = map Modifier
 
 empty :: Spell a
 empty =

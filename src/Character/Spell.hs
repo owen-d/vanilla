@@ -1,7 +1,9 @@
+{-# LANGUAGE DeriveGeneric     #-}
 {-# LANGUAGE OverloadedStrings #-}
 
 module Character.Spell where
 
+import           GHC.Generics (Generic)
 import           Spells.Spell (School (..))
 
 -- TODO: hit/crit should be affectable at the school and spell level, not just at the character-sheet
@@ -18,6 +20,7 @@ data Stats =
     , pen     :: Float
     , crit    :: Float
     }
+  deriving (Show, Generic)
 
 instance Semigroup Stats where
   a <> b =

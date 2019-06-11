@@ -1,4 +1,7 @@
+{-# LANGUAGE DeriveGeneric #-}
+
 module Table.SpellResult where
+
 
 import           Character             (Character (..))
 import           Character.Resistances (resistance)
@@ -6,7 +9,8 @@ import           Character.Spell       (spellPower)
 import qualified Character.Spell       as CSp
 import qualified Control.Applicative   as Applicative
 import           Dist                  (Dist (..))
-import           Spells.Spell          (SType (..),
+import           GHC.Generics          (Generic)
+import           Spells.Spell          (Modifier (..), SType (..),
                                         Spell (Spell, castTime, cooldown),
                                         SpellClass (..), beneficial)
 import qualified Spells.Spell          as Sp
@@ -21,16 +25,13 @@ data SpellResult =
   deriving (Show, Eq)
 
 data SpellResolve = Miss | Hit | Crit
-  deriving (Show, Eq)
+  deriving (Show, Eq, Ord, Generic)
 
 -- always prefer crit then hit then miss. Keeps track of best result
 instance Semigroup SpellResolve where
-  Miss <> x = x
-  Hit <> Miss = Hit
-  Hit <> x = x
-  Crit <> _ = Crit
+  (<>) = max
 
-hitChance :: Character -> Spell Character -> Character -> Float
+hitChance :: Character -> Spell a -> Character -> Float
 hitChance caster spell target
   | beneficial spell = 1
   | otherwise = min 0.99 $ baseHit + spellBonus + charBonus
@@ -46,7 +47,7 @@ hitChance caster spell target
       -- | diff == 0 = 96
 
 -- TODO: does mob level affect crit % (outside of crit cap)?
-critChance :: Character -> Spell Character -> Character -> Float
+critChance :: Character -> Spell a -> Character -> Float
 critChance caster spell@Spell {Sp.sClass = variant} target =
   case variant of
     Helpful Direct -> notImplemented
@@ -96,7 +97,7 @@ modify spell@Spell {Sp.modifiers = mods} caster target =
   case mods of
     [] -> spell
     (f:fs) -> modify spell' caster target
-      where spell' = f spell {Sp.modifiers = fs} caster target
+      where spell' = (unMod f) spell {Sp.modifiers = fs} caster target
 
 -- expected returns the avg expected result for a spellresult distribution
 expected :: Dist SpellResult -> Float
@@ -129,7 +130,7 @@ need a fn which, given a list of spells in priority w/ cooldowns, determines a p
 - in descending priority, max out each spell by finding the quotient: LCMDuration/cd
   - keep track of how much space is used. when space is consumed, exit
 -}
-spellDist :: [Spell Character] -> Dist (Spell Character)
+spellDist :: [Spell a] -> Dist (Spell a)
 spellDist [] = Dist []
 spellDist xs = Dist $ pull maxCd xs
   where

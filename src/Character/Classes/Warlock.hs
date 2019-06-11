@@ -1,11 +1,9 @@
 module Character.Classes.Warlock where
 
 import           Character         (Character)
-import           Dist              (Dist (..))
 import           Spells.Spell      (SType (..), School (..), Spell (..),
-                                    SpellClass (..), empty)
-import           Table.SpellResult (SpellResult (SpellResult), cast, expected,
-                                    maxCrit1)
+                                    SpellClass (..), empty, mkModifiers)
+import           Table.SpellResult (cast, expected, maxCrit1)
 
 -- spells assume DS/Ruin w/ 2 pts in suppression
 
@@ -35,7 +33,7 @@ shadowBolt =
     , critBonus = 0.05
     , critCoeff = 2
     , castTime = 2.5
-    , modifiers = [improvedSbMod]
+    , modifiers = mkModifiers [improvedSbMod]
     }
 
 improvedSbMod :: Spell Character -> Character -> Character -> Spell Character

@@ -1,6 +1,6 @@
 name:                vanilla
 version:             0.1.0.0
-github:              "githubuser/vanilla"
+github:              "owen-d/vanilla"
 license:             BSD3
 author:              "Author name here"
 maintainer:          "example@example.com"
@@ -26,6 +26,7 @@ dependencies:
 - string-conv
 - containers
 
+
 ghc-options:
   - -W
   - -Werror
@@ -46,7 +47,7 @@ executables:
 
 tests:
   vanilla-test:
-    main:                Spec.hs
+    main:                Main.hs
     source-dirs:         test
     ghc-options:
     - -threaded
@@ -54,3 +55,6 @@ tests:
     - -with-rtsopts=-N
     dependencies:
     - vanilla
+    - QuickCheck
+    - generic-random
+    - quickcheck-instances

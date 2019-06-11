@@ -1,6 +1,10 @@
+{-# LANGUAGE DeriveGeneric     #-}
 {-# LANGUAGE OverloadedStrings #-}
 
 module Character.Phys where
+
+
+import           GHC.Generics (Generic)
 
 data Stats =
   Stats
@@ -8,6 +12,7 @@ data Stats =
     , hit         :: Float
     , crit        :: Float
     }
+  deriving (Show, Generic)
 
 instance Semigroup Stats where
   a <> b =

@@ -1,5 +1,8 @@
+{-# LANGUAGE DeriveGeneric #-}
+
 module Character.Resistances where
 
+import           GHC.Generics (Generic)
 import           Spells.Spell (School (..))
 
 data Resistances =
@@ -11,6 +14,7 @@ data Resistances =
     , nature :: Float
     , shadow :: Float
     }
+  deriving (Show, Generic)
 
 
 instance Semigroup Resistances where
