@@ -1,6 +1,6 @@
 {-# LANGUAGE DeriveFunctor #-}
 
-module Prob where
+module Dist where
 
 
 import           Control.Applicative (Alternative (empty, (<|>)))
@@ -8,39 +8,39 @@ import           Control.Monad       (forM_, guard)
 import qualified Data.Map            as M
 import           Text.Printf         (printf)
 
-newtype Prob a = Prob {unProb :: [(a, Float)]} deriving (Functor)
-instance Show a => Show (Prob a) where
-  show (Prob xs) = concat $
+newtype Dist a = Dist {unDist :: [(a, Float)]} deriving (Functor)
+instance Show a => Show (Dist a) where
+  show (Dist xs) = concat $
     flip map xs (\(x,p) -> printf "%.3f %s\n" p (show x))
 
-instance Applicative Prob where
-    pure x              = Prob [(x, 1)]
-    Prob fs <*> Prob xs = Prob
+instance Applicative Dist where
+    pure x              = Dist [(x, 1)]
+    Dist fs <*> Dist xs = Dist
         [(f x, p1 * p2) | (f, p1) <- fs, (x, p2) <- xs]
 
-instance Monad Prob where
-    Prob xs >>= f = Prob
-        [(y, p1 * p2) | (x, p1) <- xs, (y, p2) <- unProb (f x)]
+instance Monad Dist where
+    Dist xs >>= f = Dist
+        [(y, p1 * p2) | (x, p1) <- xs, (y, p2) <- unDist (f x)]
 
 -- TODO: unsure of how I want to impl (<|>), but using `guard` is too useful
 -- Therefore default to (>>)
-instance Alternative Prob where
-  empty = Prob []
+instance Alternative Dist where
+  empty = Dist []
   (<|>) = (>>)
 
-uniform :: [a] -> Prob a
+uniform :: [a] -> Dist a
 uniform [] = empty
-uniform xs = Prob [(x, 1.0/ln) | x <- xs]
+uniform xs = Dist [(x, 1.0/ln) | x <- xs]
   where ln = (fromIntegral . length) xs
 
-run :: (Show a, Ord a) => Prob a -> IO ()
-run (Prob xs) =
+run :: (Show a, Ord a) => Dist a -> IO ()
+run (Dist xs) =
     forM_ (M.toList $ M.fromListWith (+) xs) $ \(x, p) ->
         printf "%.3f %s\n" p (show x)
 
 
--- d6 :: Prob Int
-d6 = Prob [(x, 1 / 6) | x <- [1 .. 6]]
+-- d6 :: Dist Int
+d6 = Dist [(x, 1 / 6) | x <- [1 .. 6]]
 
 -- try:
 -- y = run $ do {x <- d6; y <- d6; return (x + y)}

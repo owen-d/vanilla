@@ -5,7 +5,7 @@ import           Character.Resistances (resistance)
 import           Character.Spell       (spellPower)
 import qualified Character.Spell       as CSp
 import qualified Control.Applicative   as Applicative
-import           Prob                  (Prob (..))
+import           Dist                  (Dist (..))
 import           Spells.Spell          (SType (..),
                                         Spell (Spell, castTime, cooldown),
                                         SpellClass (..), beneficial)
@@ -59,18 +59,18 @@ critChance caster spell@Spell {Sp.sClass = variant} target =
 
 
 
-cast :: Spell Character -> Character -> Character -> Prob SpellResult
+cast :: Spell Character -> Character -> Character -> Dist SpellResult
 cast spell
   | beneficial spell = friendlyCast spell
   | otherwise = harmfulCast spell
 
 
-friendlyCast :: Spell Character -> Character -> Character -> Prob SpellResult
+friendlyCast :: Spell Character -> Character -> Character -> Dist SpellResult
 friendlyCast Spell{Sp.sClass=variant} _ _ = case variant of
   Harmful _ -> fail "requires a helpful spell"
   Helpful _ -> notImplemented
 
-harmfulCast :: Spell Character -> Character -> Character -> Prob SpellResult
+harmfulCast :: Spell Character -> Character -> Character -> Dist SpellResult
 harmfulCast s caster enemy@ Character{resistances=resists}=
   case variant of
   Helpful _      -> fail "requires a harmful spell"
@@ -87,7 +87,7 @@ harmfulCast s caster enemy@ Character{resistances=resists}=
     critDmg = hitDmg * Sp.critCoeff spell
     avgRes = min 0.75 $ (resistance school' resists) / (level caster * 5) * 0.75
     resCoeff = 1 - avgRes
-    mitigate xs = Prob $ flip map xs $ \(x, p) ->
+    mitigate xs = Dist $ flip map xs $ \(x, p) ->
       (x{dmg=dmg x * resCoeff}, p)
 
 -- modify applies all modifiers, returning the adjusted spell.
@@ -99,15 +99,15 @@ modify spell@Spell {Sp.modifiers = mods} caster target =
       where spell' = f spell {Sp.modifiers = fs} caster target
 
 -- expected returns the avg expected result for a spellresult distribution
-expected :: Prob SpellResult -> Float
-expected = avg . unProb
+expected :: Dist SpellResult -> Float
+expected = avg . unDist
   where
     avg = foldr (\(SpellResult{dmg=x}, p) acc -> acc + x * p) 0
 
 
 -- maxCritOnce takes SpellResult probability distribution and returns the probability distribution
 -- that includes up to one crit over the specified number of rounds
-maxCrit1 :: Prob SpellResult -> Int -> Prob SpellResult
+maxCrit1 :: Dist SpellResult -> Int -> Dist SpellResult
 maxCrit1 _ 0 = Applicative.empty
 maxCrit1 dRound n = runRound dRound (n - 1)
   where
@@ -129,9 +129,9 @@ need a fn which, given a list of spells in priority w/ cooldowns, determines a p
 - in descending priority, max out each spell by finding the quotient: LCMDuration/cd
   - keep track of how much space is used. when space is consumed, exit
 -}
-spellDist :: [Spell Character] -> Prob (Spell Character)
-spellDist [] = Prob []
-spellDist xs = Prob $ pull maxCd xs
+spellDist :: [Spell Character] -> Dist (Spell Character)
+spellDist [] = Dist []
+spellDist xs = Dist $ pull maxCd xs
   where
     max' []     = 0
     max' (x:xs) = max x $ max' xs

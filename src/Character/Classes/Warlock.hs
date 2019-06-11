@@ -1,7 +1,7 @@
 module Character.Classes.Warlock where
 
 import           Character         (Character)
-import           Prob              (Prob (..))
+import           Dist              (Dist (..))
 import           Spells.Spell      (SType (..), School (..), Spell (..),
                                     SpellClass (..), empty)
 import           Table.SpellResult (SpellResult (SpellResult), cast, expected,
