@@ -4,8 +4,10 @@ import           Character             (Character (..))
 import           Character.Resistances (resistance)
 import           Character.Spell       (spellPower)
 import qualified Character.Spell       as CSp
+import qualified Control.Applicative   as Applicative
 import           Prob                  (Prob (..))
-import           Spells.Spell          (SType (..), Spell (Spell),
+import           Spells.Spell          (SType (..),
+                                        Spell (Spell, castTime, cooldown),
                                         SpellClass (..), beneficial)
 import qualified Spells.Spell          as Sp
 import           Util                  (notImplemented)
@@ -101,3 +103,42 @@ expected :: Prob SpellResult -> Float
 expected = avg . unProb
   where
     avg = foldr (\(SpellResult{dmg=x}, p) acc -> acc + x * p) 0
+
+
+-- maxCritOnce takes SpellResult probability distribution and returns the probability distribution
+-- that includes up to one crit over the specified number of rounds
+maxCrit1 :: Prob SpellResult -> Int -> Prob SpellResult
+maxCrit1 _ 0 = Applicative.empty
+maxCrit1 dRound n = runRound dRound (n - 1)
+  where
+    runRound d 0 = d
+    runRound d n = do
+      res@ SpellResult{dmg=dmg, resolved=t} <- d
+      SpellResult{dmg=dmg', resolved=t'} <- dRound
+      if Crit == t
+        then return res
+        else
+          let d' = return SpellResult{dmg = dmg + dmg', resolved=t <> t'}
+          in runRound d' (n - 1)
+
+
+{-
+need a fn which, given a list of spells in priority w/ cooldowns, determines a probability ratio of the next spell to cast
+
+- find lowest common multiple of cooldowns
+- in descending priority, max out each spell by finding the quotient: LCMDuration/cd
+  - keep track of how much space is used. when space is consumed, exit
+-}
+spellDist :: [Spell Character] -> Prob (Spell Character)
+spellDist [] = Prob []
+spellDist xs = Prob $ pull maxCd xs
+  where
+    max' []     = 0
+    max' (x:xs) = max x $ max' xs
+    maxCd = max' $ map cooldown xs
+    pull _ [] = []
+    pull rest (x:xs) = (x, nTimes) : pull (left - nTimes * left) xs
+      where
+        maxTimes = (cooldown x) / maxCd -- max number of times spell can be cast in entire duration
+        nTimes = max (maxTimes) $ (castTime x) / rest -- bound by remaining duration
+        left = left - (nTimes * castTime x)

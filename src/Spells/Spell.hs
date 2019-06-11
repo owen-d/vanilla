@@ -26,6 +26,8 @@ data Spell a =
   Spell
     { school          :: School
     , sClass          :: SpellClass
+    , manaCost        :: Float
+    , cooldown        :: Float
     , hitBonus        :: Float
     , dmg             :: Float
     , healing         :: Float
@@ -44,6 +46,8 @@ empty =
   Spell
     { school = Arcane -- need a filler :/
     , sClass = direct -- filler again :/
+    , manaCost = 0
+    , cooldown = 0
     , hitBonus = 0
     , dmg = 0
     , healing = 0
@@ -51,7 +55,7 @@ empty =
     , coeff = 0
     , critBonus = 0
     , critCoeff = 1
-    , castTime = 0
+    , castTime = 1.5 -- gcd
     , critFlatBonuses = []
     , modifiers = []
     }
