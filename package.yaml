@@ -50,13 +50,19 @@ tests:
     main:                Main.hs
     source-dirs:         test
     ghc-options:
+    - -Wall
+    # we don't want to warn of orphans in tests as we often adhoc impl things like QuickCheck's Arbitrary
+    # and it'd be a pain to newtype wrap everything
+    # These classes of bugs should be caught while compiling the lib/executables (i hope)
+    - -fno-warn-orphans
     - -threaded
     - -rtsopts
     - -with-rtsopts=-N
     dependencies:
     - vanilla
     - generic-random
+    - QuickCheck
     - quickcheck-instances
     - tasty
     - tasty-quickcheck
-    - QuickCheck
+    - tasty-hunit

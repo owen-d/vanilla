@@ -28,6 +28,24 @@ data Character =
     }
   deriving (Show, Generic)
 
+empty60 :: Character
+empty60 =
+  Character
+    { level = 60
+    , cClass = Warrior
+    , race = Human
+    , stamina = 0
+    , strength = 0
+    , agility = 0
+    , spirit = 0
+    , resistances = mempty
+    , defenses = mempty
+    , meleeStats = mempty
+    , rangedStats = mempty
+    , spellStats = mempty
+    , guild = Nothing
+    }
+
 data Race
   = Human
   | Nightelf
