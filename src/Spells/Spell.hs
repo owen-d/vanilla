@@ -21,11 +21,17 @@ data SType = Direct | Duration | Buff
 data SpellClass = Harmful SType | Helpful SType
   deriving (Eq, Ord, Show, Generic)
 
+direct :: SpellClass
 direct = Harmful Direct
+dot :: SpellClass
 dot = Harmful Duration
+debuff :: SpellClass
 debuff = Harmful Buff
+heal :: SpellClass
 heal = Helpful Direct
+hot :: SpellClass
 hot = Helpful Duration
+buff :: SpellClass
 buff = Helpful Buff
 
 data Spell a =
@@ -82,4 +88,5 @@ beneficial Spell{sClass=c} =
     Helpful _ -> True
     Harmful _ -> False
 
+harmful :: Spell a -> Bool
 harmful = not . beneficial
