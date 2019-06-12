@@ -52,9 +52,9 @@ prop_hitEnemiesMax99 =
 prop_SpellResolveSemigroupOrder =
   QC.testProperty "Spell Resolve Semigroup preserves increasing order" test
   where
-    test ((a,b) :: (SpellResolve, SpellResolve))
-      | a >= b = if combined == a then succeeded else orderFail
-      | otherwise = if combined == b then succeeded else orderFail
+    test ((a,b) :: (SpellResolve, SpellResolve)) =
+      if combined == expected then succeeded else orderFail
         where
+          expected = max a b
           combined = a <> b
           orderFail = failed {reason="SpellResolve did not preserve increasing order"}
