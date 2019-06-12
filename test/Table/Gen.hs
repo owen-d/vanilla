@@ -2,7 +2,7 @@ module Table.Gen where
 
 import           Generic.Random    (genericArbitrary, uniform)
 import           Table.SpellResult
-import           Test.QuickCheck   (Arbitrary (..))
+import           Test.Tasty.QuickCheck   (Arbitrary (..))
 
 instance Arbitrary SpellResult where
   arbitrary = genericArbitrary uniform

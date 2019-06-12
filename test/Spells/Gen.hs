@@ -2,7 +2,7 @@ module Spells.Gen where
 
 import           Generic.Random  (genericArbitrary, uniform)
 import           Spells.Spell
-import           Test.QuickCheck (Arbitrary (..))
+import           Test.Tasty.QuickCheck (Arbitrary (..))
 
 instance Arbitrary School where
   arbitrary = genericArbitrary uniform

@@ -1,3 +1,5 @@
+{-# LANGUAGE ScopedTypeVariables #-}
+
 module Table.SpellResultTests where
 
 import           Character                (Character)
@@ -6,17 +8,16 @@ import           Spells.Gen               ()
 import           Spells.Spell             (Spell, beneficial, harmful)
 import           Table.Gen                ()
 import           Table.SpellResult        (SpellResolve, hitChance)
-import           Test.QuickCheck          (Gen, arbitrary, forAll, suchThat)
 import           Test.QuickCheck.Property (Result (..), failed, succeeded)
+import           Test.Tasty               (testGroup)
+import           Test.Tasty.QuickCheck    (Gen, arbitrary, forAll, suchThat)
+import qualified Test.Tasty.QuickCheck    as QC
 
--- hitchance, critchacne, harmfulcast, modify, expected, maxcrit1, spelldist
-
-{-
-hitChance
-- if beneficial is always 1
-- never be more than 0.99
--
--}
+tests = testGroup "SpellResult" [qcGroup]
+qcGroup =
+  testGroup
+    "(tested by QuickCheck)"
+    [prop_hitAlliesAlwaysSucceeds, prop_hitEnemiesMax99, prop_SpellResolveSemigroupOrder]
 
 helpfulSpells :: Gen (Character, Spell Character, Character)
 helpfulSpells =
@@ -43,15 +44,17 @@ hitProbLessThan1 (char, spell, target) =
   else failed {reason = "cant hit enemies w/ 100% accuracy"}
 
 prop_hitAlliesAlwaysSucceeds =
-  forAll helpfulSpells hitAlwaysSucceeds
+  QC.testProperty "hit allies always succeeds" $ forAll helpfulSpells hitAlwaysSucceeds
 
 prop_hitEnemiesMax99 =
-  forAll harmfulSpells hitProbLessThan1
+  QC.testProperty "hit enemies never 100% probability" $ forAll harmfulSpells hitProbLessThan1
 
-prop_SpellResolveSemigroupOrder :: SpellResolve -> SpellResolve -> Result
-prop_SpellResolveSemigroupOrder a b
-  | a >= b = if combined == a then succeeded else orderFail
-  | otherwise = if combined == b then succeeded else orderFail
-    where
-      combined = a <> b
-      orderFail = failed {reason="SpellResolve did not preserve increasing order"}
+prop_SpellResolveSemigroupOrder =
+  QC.testProperty "Spell Resolve Semigroup preserves increasing order" test
+  where
+    test ((a,b) :: (SpellResolve, SpellResolve))
+      | a >= b = if combined == a then succeeded else orderFail
+      | otherwise = if combined == b then succeeded else orderFail
+        where
+          combined = a <> b
+          orderFail = failed {reason="SpellResolve did not preserve increasing order"}

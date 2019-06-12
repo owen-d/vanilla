@@ -55,6 +55,8 @@ tests:
     - -with-rtsopts=-N
     dependencies:
     - vanilla
-    - QuickCheck
     - generic-random
     - quickcheck-instances
+    - tasty
+    - tasty-quickcheck
+    - QuickCheck

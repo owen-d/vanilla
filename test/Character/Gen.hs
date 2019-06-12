@@ -6,7 +6,7 @@ import           Character.Resistances     (Resistances)
 import           Character.Sheet           (CClass, Character, Race)
 import qualified Character.Spell           as CSpell
 import           Generic.Random            (genericArbitrary, uniform)
-import           Test.QuickCheck           (Arbitrary (..))
+import           Test.Tasty.QuickCheck           (Arbitrary (..))
 import           Test.QuickCheck.Instances ()
 
 instance Arbitrary CSpell.Stats where
