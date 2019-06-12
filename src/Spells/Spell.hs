@@ -90,3 +90,10 @@ beneficial Spell{sClass=c} =
 
 harmful :: Spell a -> Bool
 harmful = not . beneficial
+
+isDirect :: SpellClass -> Bool
+isDirect spellClass =
+  case spellClass of
+    Harmful Direct -> True
+    Helpful Direct -> True
+    _              -> False

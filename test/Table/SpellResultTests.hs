@@ -4,12 +4,14 @@ module Table.SpellResultTests where
 
 import           Character                (Character (level))
 import           Character.Gen            ()
-import           Character.Sheet          (empty60)
+import           Character.Sheet          (empty60, spellStats)
+import qualified Character.Spell          as CSpell
 import           Spells.Gen               ()
-import           Spells.Spell             (Spell (..), beneficial, harmful)
+import           Spells.Spell             (Spell (..), beneficial, harmful,
+                                           isDirect)
 import qualified Spells.Spell             as Spell
 import           Table.Gen                ()
-import           Table.SpellResult        (SpellResolve, hitChance)
+import           Table.SpellResult        (SpellResolve, critChance, hitChance)
 import           Test.QuickCheck.Property (Result (reason), failed, succeeded)
 import           Test.Tasty               (TestTree, testGroup)
 import           Test.Tasty.HUnit         (testCase, (@?=))
@@ -27,11 +29,16 @@ qcGroup :: TestTree
 qcGroup =
   testGroup
     "(tested by QuickCheck)"
-    [prop_hitAlliesAlwaysSucceeds, prop_hitEnemiesMax99, prop_SpellResolveSemigroupOrder]
+    [ prop_hitAlliesAlwaysSucceeds
+    , prop_hitEnemiesMax99
+    , prop_SpellResolveSemigroupOrder
+    , prop_uncrittableSpells
+    , prop_critBonusesAdditive
+    ]
 
 huGroup :: TestTree
 huGroup =
-  testGroup "(tested by HUnit)" [tc_hitCalc_0, tc_hitCalc_1, tc_hitCalc_2, tc_hitCalc_3, tc_hitCalc_4]
+  testGroup "(tested by HUnit)" [tc_hitCalc_0, tc_hitCalc_1, tc_hitCalc_2, tc_hitCalc_3, tc_hitCalc_4, tc_critCalc_0, tc_critCalc_1]
 
 
 ---------------------------------------------------------------------------
@@ -81,6 +88,34 @@ prop_SpellResolveSemigroupOrder =
           combined = a <> b
           orderFail = failed {reason="SpellResolve did not preserve increasing order"}
 
+-- dots/buffs never crit
+prop_uncrittableSpells :: TestTree
+prop_uncrittableSpells =
+  QC.testProperty "non direct spells can't crit" $
+  forAll indirectSpells doesntCrit
+  where
+    indirectSpells = arbitrary `suchThat` notDirect
+    notDirect (_, s, _) = not . isDirect . sClass $ s
+    doesntCrit ((caster, spell, target) :: ( Character
+                                           , Spell Character
+                                           , Character)) =
+      critChance caster spell target == 0
+
+prop_critBonusesAdditive :: TestTree
+prop_critBonusesAdditive =
+  QC.testProperty "spell & character crit bonuses are additive" $
+  forAll directSpells isAdditive
+  where
+    directSpells = arbitrary `suchThat` isDirect'
+    isDirect' (_, s, _) = isDirect . sClass $ s
+    isAdditive ((caster, spell, target) :: ( Character
+                                           , Spell Character
+                                           , Character)) =
+      min hits added == crits
+      where
+        added = (CSpell.crit . spellStats) caster + critBonus spell
+        hits = hitChance caster spell target
+        crits = critChance caster spell target
 
 ---------------------------------------------------------------------------
 -- HUnit Tests
@@ -119,3 +154,20 @@ tc_hitCalc_4 =
   where
     expected = 97/100 :: Float
     actual = hitChance empty60 Spell.empty empty60{level=59}
+
+tc_critCalc_0 :: TestTree
+tc_critCalc_0 =
+  testCase "crit inherits spellBonuses" (actual @?= expected)
+  where
+    expected = 0.5
+    actual = critChance empty60 Spell.empty{critBonus=expected} empty60
+
+tc_critCalc_1 :: TestTree
+tc_critCalc_1 = testCase "crit inherits charBonuses" (actual @?= expected)
+  where
+    expected = 0.5
+    actual =
+      critChance
+        empty60 {spellStats = mempty {CSpell.crit = expected}}
+        Spell.empty
+        empty60
