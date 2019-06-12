@@ -22,7 +22,7 @@ data SpellResult =
     { dmg      :: Float
     , resolved :: SpellResolve
     }
-  deriving (Show, Eq)
+  deriving (Show, Eq, Generic)
 
 data SpellResolve = Miss | Hit | Crit
   deriving (Show, Eq, Ord, Generic)

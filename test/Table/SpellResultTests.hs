@@ -4,7 +4,8 @@ import           Character                (Character)
 import           Character.Gen            ()
 import           Spells.Gen               ()
 import           Spells.Spell             (Spell, beneficial, harmful)
-import           Table.SpellResult        (hitChance)
+import           Table.Gen                ()
+import           Table.SpellResult        (SpellResolve, hitChance)
 import           Test.QuickCheck          (Gen, arbitrary, forAll, suchThat)
 import           Test.QuickCheck.Property (Result (..), failed, succeeded)
 
@@ -46,3 +47,11 @@ prop_hitAlliesAlwaysSucceeds =
 
 prop_hitEnemiesMax99 =
   forAll harmfulSpells hitProbLessThan1
+
+prop_SpellResolveSemigroupOrder :: SpellResolve -> SpellResolve -> Result
+prop_SpellResolveSemigroupOrder a b
+  | a >= b = if combined == a then succeeded else orderFail
+  | otherwise = if combined == b then succeeded else orderFail
+    where
+      combined = a <> b
+      orderFail = failed {reason="SpellResolve did not preserve increasing order"}
