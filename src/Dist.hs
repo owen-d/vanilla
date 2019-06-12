@@ -33,6 +33,10 @@ uniform [] = empty
 uniform xs = Dist [(x, 1.0/ln) | x <- xs]
   where ln = (fromIntegral . length) xs
 
+-- probability of an event occuring
+(??) :: (a -> Bool) -> Dist a -> Float
+(??) p = sum . map snd . filter (p . fst) . unDist
+
 run :: (Show a, Ord a) => Dist a -> IO ()
 run (Dist xs) =
     forM_ (M.toList $ M.fromListWith (+) xs) $ \(x, p) ->
@@ -40,13 +44,15 @@ run (Dist xs) =
 
 
 -- d6 :: Dist Int
+d6 :: Dist Int
 d6 = Dist [(x, 1 / 6) | x <- [1 .. 6]]
 
 -- try:
 -- y = run $ do {x <- d6; y <- d6; return (x + y)}
 -- What is the chance I do more than 5 damage?
 -- z = run $ do {x <- d6; y <- d6; return (x + y > 5)}
-x = run $ do
+x' :: IO ()
+x' = run $ do
   x <- d6
   y <- d6
   guard (x + y > 5)

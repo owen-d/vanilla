@@ -87,35 +87,35 @@ prop_SpellResolveSemigroupOrder =
 ---------------------------------------------------------------------------
 tc_hitCalc_0 :: TestTree
 tc_hitCalc_0 =
-  testCase "sameLevel hit" (expected @?= actual)
+  testCase "sameLevel hit" (actual @?= expected)
   where
     expected = 96/100 :: Float
     actual = hitChance empty60 Spell.empty empty60
 
 tc_hitCalc_1 :: TestTree
 tc_hitCalc_1 =
-  testCase "one-level-diff hit" (expected @?= actual)
+  testCase "one-level-diff hit" (actual @?= expected)
   where
     expected = 95/100 :: Float
     actual = hitChance empty60 Spell.empty empty60{level=61}
 
 tc_hitCalc_2 :: TestTree
 tc_hitCalc_2 =
-  testCase "two-level-diff hit" (expected @?= actual)
+  testCase "two-level-diff hit" (actual @?= expected)
   where
     expected = 94/100 :: Float
     actual = hitChance empty60 Spell.empty empty60{level=62}
 
 tc_hitCalc_3 :: TestTree
 tc_hitCalc_3 =
-  testCase "bossLevel hit" (expected @?= actual)
+  testCase "bossLevel hit" (actual @?= expected)
   where
     expected = 83/100 :: Float
     actual = hitChance empty60 Spell.empty empty60{level=63}
 
 tc_hitCalc_4 :: TestTree
 tc_hitCalc_4 =
-  testCase "above mob 1-lvl hit" (expected @?= actual)
+  testCase "above mob 1-lvl hit" (actual @?= expected)
   where
     expected = 97/100 :: Float
     actual = hitChance empty60 Spell.empty empty60{level=59}
