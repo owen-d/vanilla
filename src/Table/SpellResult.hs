@@ -109,9 +109,6 @@ expectedDmg dist =
   where
     f = foldr (\x acc-> dmg x + acc) 0
     avg = foldr (\(x,p) acc -> x * p + acc) 0
--- expected = avg . unDist
---   where
---     avg = foldr (\(SpellResult{dmg=x}, p) acc -> acc + x * p) 0
 
 -- given a round distribution, yield the sub-distribution that contains up to N critical strikes
 maxCritN :: Dist SpellResult -> Int -> Int -> Dist [SpellResult]
