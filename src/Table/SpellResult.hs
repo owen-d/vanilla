@@ -9,8 +9,7 @@ import           Character.Spell       (spellPower)
 import qualified Character.Spell       as CSp
 import           Dist                  (Dist (..), distWhere, rounds)
 import           GHC.Generics          (Generic)
-import           Spells.Spell          (Modifier (..), SType (..),
-                                        Spell (Spell, castTime, cooldown),
+import           Spells.Spell          (Modifier (..), SType (..), Spell (Spell, castTime, cooldown, duration),
                                         SpellClass (..), beneficial)
 import qualified Spells.Spell          as Sp
 import           Util                  (notImplemented)
@@ -119,23 +118,17 @@ maxCritN dist nRounds maxN =
     isCrit = (== Crit) . resolved
     populated = rounds nRounds dist
 
-{-
-need a fn which, given a list of spells in priority w/ cooldowns, determines a probability ratio of the next spell to cast
-
-- find lowest common multiple of cooldowns
-- in descending priority, max out each spell by finding the quotient: LCMDuration/cd
-  - keep track of how much space is used. when space is consumed, exit
--}
+-- given a list of spells in priority w/ cooldowns, yields an ideal spell distribution
 spellDist :: [Spell a] -> Dist (Spell a)
 spellDist [] = Dist []
-spellDist xs = Dist $ pull maxCd xs
+spellDist xs = Dist $ pull maxInterval maxInterval xs
   where
-    max' []     = 0
-    max' (y:ys) = max y $ max' ys
-    maxCd = max' $ map cooldown xs
-    pull _ [] = []
-    pull rest (y:ys) = (y, nTimes) : pull (left - nTimes * left) ys
+    maxCdOrDuration s = max (cooldown s) (duration s) -- limit casts by cooldown or duration, i.e. dont cast swp until it ends
+    intervals = map maxCdOrDuration xs
+    maxInterval = max 1.5 $ foldr max 0 intervals  -- avoid dividing by zero, so set maxCd to 1.5 (GCD)
+    pull _ _ [] = []
+    pull maxD timeLeft (y:ys) = (y, nTimes) : pull maxD timeLeft' ys
       where
-        maxTimes = (cooldown y) / maxCd -- max number of times spell can be cast in entire duration
-        nTimes = max (maxTimes) $ (castTime y) / rest -- bound by remaining duration
-        left = left - (nTimes * castTime y)
+        maxTimes = maxInterval / (maxCdOrDuration y)
+        nTimes = min maxTimes $ timeLeft / (castTime y)
+        timeLeft' = timeLeft - (nTimes * castTime y)

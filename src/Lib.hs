@@ -8,11 +8,12 @@ import qualified Character.Classes.Warlock as Wlock
 import qualified Character.Spell           as Csp
 import           Dist                      (Dist (..))
 import qualified Spells.Spell              as Spell
-import           Table.SpellResult         (cast, spellDist)
+import           Table.SpellResult         (SpellResult, cast, spellDist)
 
 someFunc :: IO ()
 someFunc = foldl (>>) (return ()) [print res, print res', print d]
 
+hero :: Character
 hero = Character
  {level=60
  , cClass = Warlock
@@ -45,6 +46,7 @@ hero = Character
 --     , guild = Nothing
 --     }
 
+boss :: Character
 boss =
   Character
     { level = 63
@@ -62,9 +64,12 @@ boss =
     , guild = Nothing
     }
 
+res :: Dist SpellResult
 res = cast Wlock.shadowBolt hero boss
 
+res' :: Dist SpellResult
 res' = cast Wlock.shadowBolt{Spell.modifiers=[], Spell.critFlatBonuses=[415.03458]} hero boss
 -- equivalent, yay!
 
-d = map (\(_,p) -> p) $ unDist $ spellDist [Wlock.shadowBolt, Wlock.curseOfDoom]
+d :: [Float]
+d = map (\(_,p) -> p) $ unDist $ spellDist [Wlock.curseOfDoom, Wlock.corruption, Wlock.shadowBolt]

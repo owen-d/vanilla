@@ -20,6 +20,7 @@ curseOfDoom =
     , dmg = 3200
     , coeff = 2
     , duration = 60
+    , cooldown = 60
     }
 
 shadowBolt :: Spell Character
@@ -34,6 +35,17 @@ shadowBolt =
     , critCoeff = 2
     , castTime = 2.5
     , modifiers = mkModifiers [improvedSbMod]
+    }
+
+corruption :: Spell Character
+corruption =
+  empty
+    { school = Shadow
+    , sClass = Harmful Duration
+    , manaCost = 340
+    , dmg = 822
+    , coeff = 1.2
+    , duration = 18
     }
 
 improvedSbMod :: Spell Character -> Character -> Character -> Spell Character
