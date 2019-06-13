@@ -61,14 +61,6 @@ roundsWith :: (a -> b -> b) -> b -> Int -> Dist a -> Dist b
 roundsWith _ acc 0 _    = Dist [(acc,1)]
 roundsWith f acc n dist = f <$> dist <*> roundsWith f acc (n - 1) dist
 
--- coalesceM is a shortcut to coalesceWith for monoids
-coalesceM :: Monoid a => Dist a -> (a, Float)
-coalesceM = coalesceWith (<>) mempty
-
--- coalesce merges all probability events together with a merge fn
-coalesceWith :: (a -> b -> b) -> b -> Dist a -> (b,Float)
-coalesceWith f acc dist = (foldr f acc dist, totalProb dist)
-
 -- adds the probabilties for all occurrences in a distribution
 totalProb :: Dist a -> Float
 totalProb (Dist [])         = 0

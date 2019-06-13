@@ -101,12 +101,17 @@ modify spell@Spell {Sp.modifiers = mods} caster target =
     (f:fs) -> modify spell' caster target
       where spell' = (unMod f) spell {Sp.modifiers = fs} caster target
 
--- expected returns the avg expected result for a spellresult distribution
-expected :: Dist SpellResult -> Float
-expected = avg . unDist
+-- expected returns the avg expected result from a distribution of [SpellResult]
+-- this is mainly used for distributions based on multiple rounds
+expectedDmg :: Dist [SpellResult] -> Float
+expectedDmg dist =
+  avg . unDist . (fmap f) $ dist
   where
-    avg = foldr (\(SpellResult{dmg=x}, p) acc -> acc + x * p) 0
-
+    f = foldr (\x acc-> dmg x + acc) 0
+    avg = foldr (\(x,p) acc -> x * p + acc) 0
+-- expected = avg . unDist
+--   where
+--     avg = foldr (\(SpellResult{dmg=x}, p) acc -> acc + x * p) 0
 
 -- given a round distribution, yield the sub-distribution that contains up to N critical strikes
 maxCritN :: Dist SpellResult -> Int -> Int -> Dist [SpellResult]

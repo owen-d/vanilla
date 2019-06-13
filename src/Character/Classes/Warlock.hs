@@ -3,7 +3,7 @@ module Character.Classes.Warlock where
 import           Character         (Character)
 import           Spells.Spell      (SType (..), School (..), Spell (..),
                                     SpellClass (..), empty, mkModifiers)
-import           Table.SpellResult (cast, expected, maxCrit1)
+import           Table.SpellResult (cast, expectedDmg, maxCritN)
 
 -- spells assume DS/Ruin w/ 2 pts in suppression
 
@@ -43,6 +43,6 @@ improvedSbMod spell@ Spell{critFlatBonuses=cfbs} caster target =
     bonusCoeff = 0.2
     charges = 4 -- charges of imp sb yielding 20% dmg each
     baseResult = cast spell caster target -- get damage distribution
-    bonus = bonusCoeff * (expected $ maxCrit1 baseResult charges)
+    bonus = bonusCoeff * (expectedDmg $ maxCritN baseResult charges 1)
 
 
