@@ -22,6 +22,10 @@ instance Monad Dist where
     Dist xs >>= f = Dist
         [(y, p1 * p2) | (x, p1) <- xs, (y, p2) <- unDist (f x)]
 
+instance Foldable Dist where
+  foldMap _ (Dist [])         = mempty
+  foldMap f (Dist ((x,_):xs)) = f x <> foldMap f (Dist xs)
+
 -- TODO: unsure of how I want to impl (<|>), but using `guard` is too useful
 -- Therefore default to (>>)
 instance Alternative Dist where
@@ -37,11 +41,41 @@ uniform xs = Dist [(x, 1.0/ln) | x <- xs]
 (??) :: (a -> Bool) -> Dist a -> Float
 (??) p = sum . map snd . filter (p . fst) . unDist
 
+-- distribution that matches a predicate
+distWhere :: (a -> Bool) -> Dist a -> Dist a
+distWhere f dist = do
+  x <- dist
+  guard (f x)
+  return x
+
+-- given a base distribution, yields a distribution of the list of choices in each round
+rounds :: Int -> Dist a -> Dist [a]
+rounds = roundsWith (:)
+
+-- version of rounds that uses mappend
+roundsM :: (Monoid a) => Int -> Dist a -> Dist a
+roundsM = roundsWith (<>)
+
+-- rounds with a function to map distributions together n times
+roundsWith :: (a -> b -> b) -> Int -> Dist a -> Dist b
+roundsWith _ 0 _    = empty
+roundsWith f n dist = f <$> dist <*> roundsWith f (n - 1) dist
+
+coalesceM :: Monoid a => Dist a -> (a, Float)
+coalesceM = coalesceWith (<>) mempty
+
+coalesceWith :: (a -> b -> b) -> b -> Dist a -> (b,Float)
+coalesceWith f acc dist = (foldr f acc dist, totalProb dist)
+
+-- adds the probabilties for all occurrences in a distribution
+totalProb :: Dist a -> Float
+totalProb (Dist [])         = 0
+totalProb (Dist ((_,p):xs)) = p + totalProb (Dist xs)
+
 run :: (Show a, Ord a) => Dist a -> IO ()
 run (Dist xs) =
     forM_ (M.toList $ M.fromListWith (+) xs) $ \(x, p) ->
         printf "%.3f %s\n" p (show x)
-
 
 -- d6 :: Dist Int
 d6 :: Dist Int
