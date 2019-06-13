@@ -7,8 +7,7 @@ import           Character             (Character (..))
 import           Character.Resistances (resistance)
 import           Character.Spell       (spellPower)
 import qualified Character.Spell       as CSp
-import qualified Control.Applicative   as Applicative
-import           Dist                  (Dist (..))
+import           Dist                  (Dist (..), distWhere, rounds)
 import           GHC.Generics          (Generic)
 import           Spells.Spell          (Modifier (..), SType (..),
                                         Spell (Spell, castTime, cooldown),
@@ -23,6 +22,9 @@ data SpellResult =
     , resolved :: SpellResolve
     }
   deriving (Show, Eq, Generic)
+
+empty :: SpellResult
+empty = SpellResult {dmg = 0, resolved = Miss}
 
 data SpellResolve = Miss | Hit | Crit
   deriving (Show, Eq, Ord, Generic)
@@ -106,22 +108,14 @@ expected = avg . unDist
     avg = foldr (\(SpellResult{dmg=x}, p) acc -> acc + x * p) 0
 
 
--- maxCritOnce takes SpellResult probability distribution and returns the probability distribution
--- that includes up to one crit over the specified number of rounds
-maxCrit1 :: Dist SpellResult -> Int -> Dist SpellResult
-maxCrit1 _ 0 = Applicative.empty
-maxCrit1 dRound n = runRound dRound (n - 1)
+-- given a round distribution, yield the sub-distribution that contains up to N critical strikes
+maxCritN :: Dist SpellResult -> Int -> Int -> Dist [SpellResult]
+maxCritN dist nRounds maxN =
+  distWhere predicate populated
   where
-    runRound d 0 = d
-    runRound d n' = do
-      res@ SpellResult{dmg=spDmg, resolved=t} <- d
-      SpellResult{dmg=spDmg', resolved=t'} <- dRound
-      if Crit == t
-        then return res
-        else
-          let d' = return SpellResult{dmg = spDmg + spDmg', resolved=t <> t'}
-          in runRound d' (n' - 1)
-
+    predicate xs = length (filter isCrit xs) <= maxN
+    isCrit = (== Crit) . resolved
+    populated = rounds nRounds dist
 
 {-
 need a fn which, given a list of spells in priority w/ cooldowns, determines a probability ratio of the next spell to cast

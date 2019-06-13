@@ -50,20 +50,22 @@ distWhere f dist = do
 
 -- given a base distribution, yields a distribution of the list of choices in each round
 rounds :: Int -> Dist a -> Dist [a]
-rounds = roundsWith (:)
+rounds = roundsWith (:) []
 
 -- version of rounds that uses mappend
 roundsM :: (Monoid a) => Int -> Dist a -> Dist a
-roundsM = roundsWith (<>)
+roundsM = roundsWith (<>) mempty
 
--- rounds with a function to map distributions together n times
-roundsWith :: (a -> b -> b) -> Int -> Dist a -> Dist b
-roundsWith _ 0 _    = empty
-roundsWith f n dist = f <$> dist <*> roundsWith f (n - 1) dist
+-- rounds with a function to map distributions together n times from a starting value
+roundsWith :: (a -> b -> b) -> b -> Int -> Dist a -> Dist b
+roundsWith _ acc 0 _    = Dist [(acc,1)]
+roundsWith f acc n dist = f <$> dist <*> roundsWith f acc (n - 1) dist
 
+-- coalesceM is a shortcut to coalesceWith for monoids
 coalesceM :: Monoid a => Dist a -> (a, Float)
 coalesceM = coalesceWith (<>) mempty
 
+-- coalesce merges all probability events together with a merge fn
 coalesceWith :: (a -> b -> b) -> b -> Dist a -> (b,Float)
 coalesceWith f acc dist = (foldr f acc dist, totalProb dist)
 
