@@ -7,7 +7,8 @@ import           Character             (Character (..))
 import           Character.Resistances (resistance)
 import           Character.Spell       (spellPower)
 import qualified Character.Spell       as CSp
-import           Dist                  (Dist (..), distWhere, rounds)
+import           Dist                  (Dist (..), coalesceWith, distWhere,
+                                        rounds, softmax)
 import           GHC.Generics          (Generic)
 import           Spells.Spell          (Modifier (..), SType (..), Spell (Spell, castTime, cooldown, duration),
                                         SpellClass (..), beneficial)
@@ -22,6 +23,13 @@ data SpellResult =
     }
   deriving (Show, Eq, Generic)
 
+instance Semigroup SpellResult where
+  a <> b =
+    SpellResult {dmg = dmg a + dmg b, resolved = resolved a <> resolved b}
+
+instance Monoid SpellResult where
+  mempty = empty
+
 empty :: SpellResult
 empty = SpellResult {dmg = 0, resolved = Miss}
 
@@ -31,6 +39,9 @@ data SpellResolve = Miss | Hit | Crit
 -- always prefer crit then hit then miss. Keeps track of best result
 instance Semigroup SpellResolve where
   (<>) = max
+
+instance Monoid SpellResolve where
+  mempty = Miss
 
 hitChance :: Character -> Spell a -> Character -> Float
 hitChance caster spell target
@@ -100,7 +111,7 @@ modify spell@Spell {Sp.modifiers = mods} caster target =
     (f:fs) -> modify spell' caster target
       where spell' = (unMod f) spell {Sp.modifiers = fs} caster target
 
--- expected returns the avg expected result from a distribution of [SpellResult]
+-- expectedDmg returns the avg expected result from a distribution of [SpellResult]
 -- this is mainly used for distributions based on multiple rounds
 expectedDmg :: Dist [SpellResult] -> Float
 expectedDmg dist =
@@ -121,7 +132,7 @@ maxCritN dist nRounds maxN =
 -- given a list of spells in priority w/ cooldowns, yields an ideal spell distribution
 spellDist :: [Spell a] -> Dist (Spell a)
 spellDist [] = Dist []
-spellDist xs = Dist $ pull maxInterval maxInterval xs
+spellDist xs = (softmax . Dist) $ pull maxInterval maxInterval xs
   where
     maxCdOrDuration s = max (cooldown s) (duration s) -- limit casts by cooldown or duration, i.e. dont cast swp until it ends
     intervals = map maxCdOrDuration xs
@@ -132,3 +143,14 @@ spellDist xs = Dist $ pull maxInterval maxInterval xs
         maxTimes = maxInterval / (maxCdOrDuration y)
         nTimes = min maxTimes $ timeLeft / (castTime y)
         timeLeft' = timeLeft - (nTimes * castTime y)
+
+-- dps gets the dps for a spell prio list / caster / target combo
+dps :: [Spell Character] -> Character -> Character -> Float
+dps spellPrios caster target =
+  coalesceWith reducer 0 dist
+  where
+    dist = do
+      s <- spellDist spellPrios
+      (byCastTime $ Sp.castTime s) <$> cast s caster target
+    byCastTime cTime result@ SpellResult{dmg=dmgDone} = result{dmg=dmgDone/cTime}  -- adjust damage by the cast time of the spell
+    reducer p SpellResult{dmg=dmgDone} acc = acc + p * (dmgDone)
