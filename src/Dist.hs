@@ -72,6 +72,12 @@ softmax dist@ (Dist xs) =
   where
     ps = totalProb dist
 
+-- coalesceWith reduces a distribution to a single value using each occurrence's probability
+coalesceWith :: (Float -> a -> b -> b) -> b -> Dist a -> b
+coalesceWith _ acc (Dist []) = acc
+coalesceWith f acc (Dist ((x,p):xs)) =
+  f p x $ coalesceWith f acc (Dist xs)
+
 run :: (Show a, Ord a) => Dist a -> IO ()
 run (Dist xs) =
     forM_ (M.toList $ M.fromListWith (+) xs) $ \(x, p) ->
