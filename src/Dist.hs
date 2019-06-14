@@ -63,8 +63,14 @@ roundsWith f acc n dist = f <$> dist <*> roundsWith f acc (n - 1) dist
 
 -- adds the probabilties for all occurrences in a distribution
 totalProb :: Dist a -> Float
-totalProb (Dist [])         = 0
-totalProb (Dist ((_,p):xs)) = p + totalProb (Dist xs)
+totalProb (Dist xs) = sum $ map snd xs
+
+-- softmax normalizes a Distribution such that all probabilities sum to one
+softmax :: Dist a -> Dist a
+softmax dist@ (Dist xs) =
+  Dist $ flip map xs $ \(x,p) -> (x,p/ps)
+  where
+    ps = totalProb dist
 
 run :: (Show a, Ord a) => Dist a -> IO ()
 run (Dist xs) =
