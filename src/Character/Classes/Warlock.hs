@@ -7,6 +7,10 @@ import           Table.SpellResult (cast, expectedDmg, maxCritN)
 
 -- spells assume DS/Ruin w/ 2 pts in suppression
 
+-- shadow weaving + curse of shadows
+raidbuffs :: Fractional a => a -> a
+raidbuffs y = y * 1.15 * 1.1
+
 lifeTap :: Spell a
 lifeTap = empty {school = Shadow, sClass = Helpful Buff}
 
