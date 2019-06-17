@@ -14,14 +14,15 @@ addInput :: Input -> Character -> Character
 addInput input character@Character {spellStats = original} =
   character {spellStats = updated}
   where
+    sdIncrement = 10
     updated =
       case input of
-        School Arcane -> original {arcane = arcane original + 1}
-        School Fire   -> original {fire = fire original + 1}
-        School Frost  -> original {frost = frost original + 1}
-        School Holy   -> original {holy = holy original + 1}
-        School Nature -> original {nature = nature original + 1}
-        School Shadow -> original {shadow = shadow original + 1}
+        School Arcane -> original {arcane = arcane original + sdIncrement}
+        School Fire   -> original {fire = fire original + sdIncrement}
+        School Frost  -> original {frost = frost original + sdIncrement}
+        School Holy   -> original {holy = holy original + sdIncrement}
+        School Nature -> original {nature = nature original + sdIncrement}
+        School Shadow -> original {shadow = shadow original + sdIncrement}
         SpellHit      -> original {hit = hit original + 0.01}
         SpellCrit     -> original {crit = crit original + 0.01}
 
