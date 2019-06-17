@@ -5,11 +5,13 @@ import           Spells.Spell      (SType (..), School (..), Spell (..),
                                     SpellClass (..), empty, mkModifiers)
 import           Table.SpellResult (cast, expectedDmg, maxCritN)
 
--- spells assume DS/Ruin w/ 2 pts in suppression
+-- spells assume SM/Ruin pts in suppression
 
--- shadow weaving + curse of shadows
 raidbuffs :: Fractional a => a -> a
-raidbuffs y = y * 1.15 * 1.1
+raidbuffs y = y * (1 + 0.15 + 0.1 + 0.1) -- shadow weaving + curse of shadows + shadow mastery
+
+spellPrios :: [Spell Character]
+spellPrios = [curseOfDoom, shadowBolt]
 
 lifeTap :: Spell a
 lifeTap = empty {school = Shadow, sClass = Helpful Buff}
