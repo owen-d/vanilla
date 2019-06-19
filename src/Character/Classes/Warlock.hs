@@ -1,9 +1,12 @@
 module Character.Classes.Warlock where
 
 import           Character         (Character)
+import           Data.Function     (fix)
+import           Dist              (Dist (..))
 import           Spells.Spell      (SType (..), School (..), Spell (..),
                                     SpellClass (..), empty, mkModifiers)
-import           Table.SpellResult (cast, expectedDmg, maxCritN)
+import           Table.SpellResult (cast, expectedDmg, maxCritN,
+                                    spellDistWithReserved)
 
 -- spells assume SM/Ruin pts in suppression
 
@@ -13,8 +16,35 @@ raidbuffs y = y * (1 + 0.15 + 0.1 + 0.1) -- shadow weaving + curse of shadows + 
 spellPrios :: [Spell Character]
 spellPrios = [curseOfDoom, shadowBolt]
 
+{-
+spellDist calculates the fixed point of a spell rotation which includes lifetaps.
+The idea is that for a given spell distribution, you can calculate how many lifetaps are required
+to break even. Addingthose to the distribution alters it, though. Thus, we use the y-combinator
+to calculat the fixed point, iteratively adjusting the distribution until we reach an acceptable
+threshold of accuracy.
+-}
+spellDist :: Float -> Dist (Spell Character)
+spellDist spellDmg
+  -- store (spellDist,reserved time for lifetapping)
+ =
+  flip fix ((spellDistWithReserved spellPrios 0), 0) $ \f (Dist xs, reserved) ->
+    let totalCost = sum $ map (\(x, p) -> p * manaCost x) xs
+        perTap = 504 + 0.8 * spellDmg -- mana gained per lifetap
+        lifetaps cost = cost / perTap -- # of lifetaps required to gain x mana
+        tapsIn t = t / castTime lifeTap -- # of life taps in a period t
+        manaReserved = tapsIn reserved * perTap -- mana gained from lifetapping w/ reserved time
+        reservedDiff = lifetaps (manaReserved - totalCost) * castTime lifeTap -- num lifetaps to add/subtract to hit new distribution
+        reserved' = reserved - reservedDiff -- how much to reserve next attempt
+        finished = abs reservedDiff < 0.001 -- arbitrary finished threshold
+     in if finished
+          then Dist $ xs ++ [(lifeTap, tapsIn reserved)] -- add lifetaps into reserved space
+          else f (spellDistWithReserved spellPrios reserved', reserved')
+
+
+-- 504 healing w/ imp lifetap 20%
+-- hack: classify as Harmful Buff b/c we don't currently have a way to cast helpful spells
 lifeTap :: Spell a
-lifeTap = empty {school = Shadow, sClass = Helpful Buff}
+lifeTap = empty {school = Shadow, sClass = Harmful Buff, coeff = 0.8}
 
 curseOfDoom :: Spell a
 curseOfDoom =
