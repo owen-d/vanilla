@@ -1,39 +1,70 @@
+{-# LANGUAGE FlexibleContexts #-}
+
 module Lib where
 
-import           Character                 (CClass (..), Character (..),
-                                            Race (..))
-import qualified Character.Classes.Warlock as Wlock
-import qualified Character.Spell           as Csp
-import           PDeriv                    (partials)
-import           Table.SpellResult         (dps)
+import           Character                   (CClass (..), Character (..),
+                                              Race (..))
+import qualified Character.Classes.FireMage  as FireMage
+import qualified Character.Classes.FrostMage as FrostMage
+import qualified Character.Classes.Warlock   as Wlock
+import qualified Character.Spell             as CSp
+import           Dist                        (Distable (..))
+import           PDeriv                      (partials)
+import           Spells.Spell                (Spell)
+import           Table.SpellResult           (dps, spellDist)
 
-someFunc :: IO ()
-someFunc = foldl (>>) (return ()) [output]
+main :: IO ()
+main = foldl (>>) (return ()) outputs
 
-output :: IO ()
-output = do
-  putStrLn $  "dps: " ++ (show (f hero))
-  partials f hero
+output ::
+     (Show b, Fractional b, Distable c (Spell Character))
+  => String
+  -> Character
+  -> c
+  -> (Float -> b)
+  -> IO ()
+output label char sDist raidbuffs = do
+  putStrLn $  "\ndps (" ++ label ++ "): " ++ (show (f char))
+  partials f char
   where
     -- raidbuffs calcing at the end should be fine due to distributive property
     -- of multiplication over addition. Also b/c only one spell school is used
-    f c = Wlock.raidbuffs $ dps [Wlock.curseOfDoom, Wlock.corruption, Wlock.shadowBolt] c boss
+    f c = raidbuffs $ dps (toDist sDist) c boss
+
+outputs :: [IO ()]
+outputs =
+  [ output "warlock" hero (Wlock.spellDist shadowDmg) Wlock.raidbuffs
+  , output "frost mage" hero (spellDist FrostMage.spellPrios) FrostMage.raidbuffs
+  , output "fire mage" hero (spellDist FireMage.spellPrios) FireMage.raidbuffs
+  ]
+  where
+    shadowDmg = CSp.shadow . spellStats $ hero
+
 
 hero :: Character
-hero = Character
- {level=60
- , cClass = Warlock
- , race = Gnome
- , stamina = 100
- , strength = 100
- , agility = 100
- , spirit = 100
- , resistances=mempty
- , defenses=mempty
- , meleeStats=mempty
- , rangedStats=mempty
- , spellStats=mempty{Csp.shadow=120, Csp.crit=0.12, Csp.hit=0.04}
- , guild=Nothing}
+hero =
+  Character
+    { level = 60
+    , cClass = Warlock
+    , race = Gnome
+    , stamina = 100
+    , strength = 100
+    , agility = 100
+    , spirit = 100
+    , resistances = mempty
+    , defenses = mempty
+    , meleeStats = mempty
+    , rangedStats = mempty
+    , spellStats =
+        mempty
+          { CSp.shadow = 200
+          , CSp.frost = 200
+          , CSp.fire = 200
+          , CSp.crit = 0.12
+          , CSp.hit = 0.06
+          }
+    , guild = Nothing
+    }
 
 -- sameLevelEnemy =
 --   Character
@@ -70,12 +101,23 @@ boss =
     , guild = Nothing
     }
 
--- res :: Dist SpellResult
--- res = cast Wlock.shadowBolt hero boss
+-- fix :: (a -> a) -> a
+-- fix f = let {x = f x} in x
 
--- res' :: Dist SpellResult
--- res' = cast Wlock.shadowBolt{Spell.modifiers=[], Spell.critFlatBonuses=[415.03458]} hero boss
--- -- equivalent, yay!
+-- (a -> a)
+-- subsituting a = (b -> c)
+-- ((b -> c) -> (b -> c)) -> (b -> c)
+-- simplify: ((b -> c) -> b -> c) -> b -> c
 
--- d :: [Float]
--- d = map (\(_,p) -> p) $ unDist $ spellDist [Wlock.curseOfDoom, Wlock.corruption, Wlock.shadowBolt]
+-- z y = fix f y
+--   where
+--     f x =
+--       if x <= 0 then x else f (x-1)
+
+-- z x =
+--   fix
+--     (\f b ->
+--        if b <= 0
+--          then b
+--          else f (b - 1))
+--   x
