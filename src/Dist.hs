@@ -1,4 +1,7 @@
-{-# LANGUAGE DeriveFunctor #-}
+{-# LANGUAGE DeriveFunctor          #-}
+{-# LANGUAGE FlexibleInstances      #-}
+{-# LANGUAGE FunctionalDependencies #-}
+{-# LANGUAGE MultiParamTypeClasses  #-}
 
 module Dist where
 
@@ -8,7 +11,17 @@ import           Control.Monad       (forM_, guard)
 import qualified Data.Map            as M
 import           Text.Printf         (printf)
 
+class Distable a b | a -> b where
+  toDist :: a -> Dist b
+
 newtype Dist a = Dist {unDist :: [(a, Float)]} deriving (Functor)
+
+instance Distable (Dist a) a where
+  toDist = id
+
+instance Distable [a] a where
+  toDist xs = uniform xs
+
 instance Show a => Show (Dist a) where
   show (Dist xs) = concat $
     flip map xs (\(x,p) -> printf "%.3f %s\n" p (show x))
