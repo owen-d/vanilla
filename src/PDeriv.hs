@@ -14,7 +14,8 @@ addInput :: Input -> Character -> Character
 addInput input character@Character {spellStats = original} =
   character {spellStats = updated}
   where
-    sdIncrement = 10
+    -- https://vanilla-wow.fandom.com/wiki/Item_level
+    sdIncrement = 14/0.86 -- 1 crit or hit = 14 pts, so 14/all schools rating
     updated =
       case input of
         School Arcane -> original {arcane = arcane original + sdIncrement}
@@ -26,9 +27,9 @@ addInput input character@Character {spellStats = original} =
         SpellHit      -> original {hit = hit original + 0.01}
         SpellCrit     -> original {crit = crit original + 0.01}
 
-partials :: (Show b, Fractional b) => (Character -> b) -> Character -> IO ()
+partials :: (Fractional b) => (Character -> b) -> Character -> [(Input, b)]
 partials fn character =
-  mapM_ (calc character) inputs
+  map (calc character) inputs
   where
     inputs =
       [ School Arcane
@@ -40,8 +41,8 @@ partials fn character =
       , SpellHit
       , SpellCrit
       ]
-    calc c input = do
-      let c' = addInput input c
-      let y = fn c
-      let y' = fn c'
-      print (input, y' - y)
+    calc c input = (input, y'-y)
+      where
+        c' = addInput input c
+        y = fn c
+        y' = fn c'

@@ -9,8 +9,8 @@ import qualified Character.Classes.FrostMage as FrostMage
 import qualified Character.Classes.Warlock   as Wlock
 import qualified Character.Spell             as CSp
 import           Dist                        (Distable (..))
-import           PDeriv                      (partials)
-import           Spells.Spell                (Spell)
+import           PDeriv                      (Input (..), partials)
+import           Spells.Spell                (School (..), Spell)
 import           Table.SpellResult           (dps, spellDist)
 
 main :: IO ()
@@ -25,7 +25,7 @@ output ::
   -> IO ()
 output label char sDist raidbuffs = do
   putStrLn $  "\ndps (" ++ label ++ "): " ++ (show (f char))
-  partials f char
+  mapM_ print $ partials f char
   where
     -- raidbuffs calcing at the end should be fine due to distributive property
     -- of multiplication over addition. Also b/c only one spell school is used
@@ -60,11 +60,29 @@ hero =
           { CSp.shadow = 200
           , CSp.frost = 200
           , CSp.fire = 200
-          , CSp.crit = 0.12
+          , CSp.crit = 0.14
           , CSp.hit = 0.06
           }
     , guild = Nothing
     }
+
+warlockStepsByShadowDmg = do
+  mapM_ mkOutput heroes
+  where
+    heroes = take 10 $ mkHeroes 0
+    mkHeroes sd = withDmg hero sd : mkHeroes (sd+50)
+    withDmg h n = h {spellStats = (spellStats h) {CSp.shadow = n}}
+    mkOutput h = calc ("warlock: " ++ show shadowDmg) h (Wlock.spellDist shadowDmg) Wlock.raidbuffs
+      where
+        shadowDmg = CSp.shadow . spellStats $ h
+        calc label char sDist raidbuffs = do
+          putStrLn $  "\ndps (" ++ label ++ "): " ++ (show (f char))
+          mapM_ print [(i,y) | (i,y) <- partials f char, any (\f -> f i) filters]
+          where
+            f c = raidbuffs $ dps (toDist sDist) c boss
+            filters = [(==SpellHit), (==SpellCrit), (==School Shadow)]
+
+
 
 -- sameLevelEnemy =
 --   Character

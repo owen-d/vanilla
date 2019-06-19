@@ -4,6 +4,7 @@
 - https://us.forums.blizzard.com/en/wow/t/bug-hit-tables/185675/8
 - https://wowwiki.fandom.com/wiki/Attack_table?oldid=396406
 - https://wowwiki.fandom.com/wiki/Spell_power_coefficient?oldid=1721745
+- https://vanilla-wow.fandom.com/wiki/Item_level
 
 ## Things we don't take into account/eventual TODO
 - fight longevity -- thus we underestimate int/spirit/mp5, for example.
