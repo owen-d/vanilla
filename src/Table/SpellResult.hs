@@ -122,35 +122,47 @@ expectedDmg dist =
 
 -- given a round distribution, yield the sub-distribution that contains up to N critical strikes
 maxCritN :: Dist SpellResult -> Int -> Int -> Dist [SpellResult]
-maxCritN dist nRounds maxN =
-  distWhere predicate populated
+maxCritN dist nRounds n =
+  maxTimes dist predicate nRounds n
   where
-    predicate xs = length (filter isCrit xs) <= maxN
-    isCrit = (== Crit) . resolved
+    predicate = (== Crit) . resolved
+
+-- generic variant
+maxTimes :: Dist a -> (a -> Bool) -> Int ->Int -> Dist [a]
+maxTimes dist predicate nRounds n =
+  distWhere predicate' populated
+  where
+    predicate' xs = length (filter predicate xs) <= n
     populated = rounds nRounds dist
 
 -- given a list of spells in priority w/ cooldowns, yields an ideal spell distribution
 spellDist :: [Spell a] -> Dist (Spell a)
-spellDist [] = Dist []
-spellDist xs = (softmax . Dist) $ pull maxInterval maxInterval xs
+spellDist = flip spellDistWithReserved 0
+
+-- allow part of the casting-time space to be reserved (i.e. for lifetap)
+spellDistWithReserved :: [Spell a] -> Float -> Dist (Spell a)
+spellDistWithReserved [] _ = Dist []
+spellDistWithReserved xs reserved =
+  Dist $ populate maxInterval (maxInterval-reserved) xs
   where
     maxCdOrDuration s = max (cooldown s) (duration s) -- limit casts by cooldown or duration, i.e. dont cast swp until it ends
-    intervals = map maxCdOrDuration xs
+    intervals = map maxCdOrDuration xs -- how often a spell can be cast
     maxInterval = max 1.5 $ foldr max 0 intervals  -- avoid dividing by zero, so set maxCd to 1.5 (GCD)
-    pull _ _ [] = []
-    pull maxD timeLeft (y:ys) = (y, nTimes) : pull maxD timeLeft' ys
+    populate _ _ [] = []
+    populate maxD timeLeft (y:ys) = (y, nTimes) : populate maxD timeLeft' ys
       where
         maxTimes = maxInterval / (maxCdOrDuration y)
-        nTimes = min maxTimes $ timeLeft / (castTime y)
+        nTimes = max 0 $ min maxTimes $ timeLeft / (castTime y)
         timeLeft' = timeLeft - (nTimes * castTime y)
 
+
 -- dps gets the dps for a spell prio list / caster / target combo
-dps :: [Spell Character] -> Character -> Character -> Float
-dps spellPrios caster target =
+dps :: Dist (Spell Character) -> Character -> Character -> Float
+dps sDist caster target =
   coalesceWith reducer 0 dist
   where
     dist = do
-      s <- spellDist spellPrios
+      s <- softmax sDist
       (byCastTime $ Sp.castTime s) <$> cast s caster target
     byCastTime cTime result@ SpellResult{dmg=dmgDone} = result{dmg=dmgDone/cTime}  -- adjust damage by the cast time of the spell
     reducer p SpellResult{dmg=dmgDone} acc = acc + p * (dmgDone)
