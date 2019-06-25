@@ -16,6 +16,29 @@ raidbuffs y = y * (1 + 0.15 + 0.1 + 0.1) -- shadow weaving + curse of shadows + 
 spellPrios :: [Spell Character]
 spellPrios = [curseOfDoom, shadowBolt]
 
+
+-- fix :: (a -> a) -> a
+-- fix f = let {x = f x} in x
+
+-- (a -> a)
+-- subsituting a = (b -> c)
+-- ((b -> c) -> (b -> c)) -> (b -> c)
+-- simplify: ((b -> c) -> b -> c) -> b -> c
+
+-- z y = fix f y
+--   where
+--     f x =
+--       if x <= 0 then x else f (x-1)
+
+-- z x =
+--   fix
+--     (\f b ->
+--        if b <= 0
+--          then b
+--          else f (b - 1))
+--   x
+
+
 {-
 spellDist calculates the fixed point of a spell rotation which includes lifetaps.
 The idea is that for a given spell distribution, you can calculate how many lifetaps are required
