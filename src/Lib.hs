@@ -13,8 +13,7 @@ import           PDeriv                      (Input (..), partials)
 import           Spells.Spell                (School (..), Spell)
 import           Table.SpellResult           (dps, spellDist)
 
-main :: IO ()
-main = foldl (>>) (return ()) outputs
+main = sequence_ outputs
 
 output ::
      (Show b, Fractional b, Distable c (Spell Character))
@@ -57,9 +56,9 @@ hero =
     , rangedStats = mempty
     , spellStats =
         mempty
-          { CSp.shadow = 200
-          , CSp.frost = 200
-          , CSp.fire = 200
+          { CSp.shadow = 400
+          , CSp.frost = 400
+          , CSp.fire = 400
           , CSp.crit = 0.14
           , CSp.hit = 0.06
           }
