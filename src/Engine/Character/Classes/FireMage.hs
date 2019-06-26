@@ -1,8 +1,8 @@
-module Character.Classes.FireMage where
+module Engine.Character.Classes.FireMage where
 
-import           Character    (Character)
-import           Spells.Spell (SType (..), School (..), Spell (..),
-                               SpellClass (..), empty)
+import           Engine.Character    (Character)
+import           Engine.Spells.Spell (SType (..), School (..), Spell (..),
+                                      SpellClass (..), empty)
 
 -- imp scorch * curse of elements
 raidbuffs :: Fractional a => a -> a

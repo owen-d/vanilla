@@ -1,14 +1,14 @@
 {-# LANGUAGE DeriveGeneric     #-}
 {-# LANGUAGE OverloadedStrings #-}
 
-module Character.Sheet where
+module Engine.Character.Sheet where
 
-import           Character.Defenses    (Defenses (..))
-import qualified Character.Phys        as Phys
-import           Character.Resistances (Resistances (..))
-import qualified Character.Spell       as Spell
-import           Data.Text             as T
-import           GHC.Generics          (Generic)
+import           Data.Text                    as T
+import           Engine.Character.Defenses    (Defenses (..))
+import qualified Engine.Character.Phys        as Phys
+import           Engine.Character.Resistances (Resistances (..))
+import qualified Engine.Character.Spell       as Spell
+import           GHC.Generics                 (Generic)
 
 data Character =
   Character

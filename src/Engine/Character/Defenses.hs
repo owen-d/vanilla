@@ -1,7 +1,7 @@
 {-# LANGUAGE DeriveGeneric     #-}
 {-# LANGUAGE OverloadedStrings #-}
 
-module Character.Defenses where
+module Engine.Character.Defenses where
 
 import           GHC.Generics (Generic)
 

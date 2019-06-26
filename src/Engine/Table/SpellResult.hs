@@ -1,19 +1,19 @@
 {-# LANGUAGE DeriveGeneric #-}
 
-module Table.SpellResult where
+module Engine.Table.SpellResult where
 
 
-import           Character             (Character (..))
-import           Character.Resistances (resistance)
-import           Character.Spell       (spellPower)
-import qualified Character.Spell       as CSp
-import           Dist                  (Dist (..), coalesceWith, distWhere,
-                                        rounds, softmax)
-import           GHC.Generics          (Generic)
-import           Spells.Spell          (Modifier (..), SType (..), Spell (Spell, castTime, cooldown, duration),
-                                        SpellClass (..), beneficial)
-import qualified Spells.Spell          as Sp
-import           Util                  (notImplemented)
+import           Engine.Character             (Character (..))
+import           Engine.Character.Resistances (resistance)
+import           Engine.Character.Spell       (spellPower)
+import qualified Engine.Character.Spell       as CSp
+import           Engine.Dist                  (Dist (..), coalesceWith,
+                                               distWhere, rounds, softmax)
+import           Engine.Spells.Spell          (Modifier (..), SType (..), Spell (Spell, castTime, cooldown, duration),
+                                               SpellClass (..), beneficial)
+import qualified Engine.Spells.Spell          as Sp
+import           Engine.Util                  (notImplemented)
+import           GHC.Generics                 (Generic)
 
 -- currently we only model damage, although some types exist to specify healing/buffs
 data SpellResult =

@@ -1,17 +1,17 @@
 {-# LANGUAGE FlexibleContexts #-}
 
-module Lib where
+module Engine.Lib where
 
-import           Character                   (CClass (..), Character (..),
-                                              Race (..))
-import qualified Character.Classes.FireMage  as FireMage
-import qualified Character.Classes.FrostMage as FrostMage
-import qualified Character.Classes.Warlock   as Wlock
-import qualified Character.Spell             as CSp
-import           Dist                        (Distable (..))
-import           PDeriv                      (Input (..), partials)
-import           Spells.Spell                (School (..), Spell)
-import           Table.SpellResult           (dps, spellDist)
+import           Engine.Character                   (CClass (..),
+                                                     Character (..), Race (..))
+import qualified Engine.Character.Classes.FireMage  as FireMage
+import qualified Engine.Character.Classes.FrostMage as FrostMage
+import qualified Engine.Character.Classes.Warlock   as Wlock
+import qualified Engine.Character.Spell             as CSp
+import           Engine.Dist                        (Distable (..))
+import           Engine.PDeriv                      (Input (..), partials)
+import           Engine.Spells.Spell                (School (..), Spell)
+import           Engine.Table.SpellResult           (dps, spellDist)
 
 main = sequence_ outputs
 

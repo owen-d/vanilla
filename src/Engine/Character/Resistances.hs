@@ -1,9 +1,9 @@
 {-# LANGUAGE DeriveGeneric #-}
 
-module Character.Resistances where
+module Engine.Character.Resistances where
 
-import           GHC.Generics (Generic)
-import           Spells.Spell (School (..))
+import           Engine.Spells.Spell (School (..))
+import           GHC.Generics        (Generic)
 
 data Resistances =
   Resistances

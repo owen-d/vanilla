@@ -1,13 +1,13 @@
 module Character.Gen where
 
-import           Character.Defenses        (Defenses)
-import qualified Character.Phys            as Phys
-import           Character.Resistances     (Resistances)
-import           Character.Sheet           (CClass, Character, Race)
-import qualified Character.Spell           as CSpell
-import           Generic.Random            (genericArbitrary, uniform)
-import           Test.Tasty.QuickCheck           (Arbitrary (..))
-import           Test.QuickCheck.Instances ()
+import           Engine.Character.Defenses    (Defenses)
+import qualified Engine.Character.Phys        as Phys
+import           Engine.Character.Resistances (Resistances)
+import           Engine.Character.Sheet       (CClass, Character, Race)
+import qualified Engine.Character.Spell       as CSpell
+import           Generic.Random               (genericArbitrary, uniform)
+import           Test.QuickCheck.Instances    ()
+import           Test.Tasty.QuickCheck        (Arbitrary (..))
 
 instance Arbitrary CSpell.Stats where
   arbitrary = genericArbitrary uniform

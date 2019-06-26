@@ -1,7 +1,7 @@
 {-# LANGUAGE DeriveGeneric #-}
 
 
-module Spells.Spell where
+module Engine.Spells.Spell where
 
 
 import           GHC.Generics (Generic)

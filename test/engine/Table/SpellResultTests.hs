@@ -2,16 +2,16 @@
 
 module Table.SpellResultTests where
 
-import           Character                (Character (level))
 import           Character.Gen            ()
-import           Character.Sheet          (empty60, spellStats)
-import qualified Character.Spell          as CSpell
-import           Spells.Gen               ()
-import           Spells.Spell             (Spell (..), beneficial, harmful,
+import           Engine.Character         (Character (level))
+import           Engine.Character.Sheet   (empty60, spellStats)
+import qualified Engine.Character.Spell   as CSpell
+import           Engine.Spells.Spell      (Spell (..), beneficial, harmful,
                                            isDirect)
-import qualified Spells.Spell             as Spell
+import qualified Engine.Spells.Spell      as Spell
+import           Engine.Table.SpellResult (SpellResolve, critChance, hitChance)
+import           Spells.Gen               ()
 import           Table.Gen                ()
-import           Table.SpellResult        (SpellResolve, critChance, hitChance)
 import           Test.QuickCheck.Property (Result (reason), failed, succeeded)
 import           Test.Tasty               (TestTree, testGroup)
 import           Test.Tasty.HUnit         (testCase, (@?=))

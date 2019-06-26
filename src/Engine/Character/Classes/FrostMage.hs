@@ -1,8 +1,8 @@
-module Character.Classes.FrostMage where
+module Engine.Character.Classes.FrostMage where
 
-import           Character    (Character)
-import           Spells.Spell (SType (..), School (..), Spell (..),
-                               SpellClass (..), empty)
+import           Engine.Character    (Character)
+import           Engine.Spells.Spell (SType (..), School (..), Spell (..),
+                                      SpellClass (..), empty)
 
 
 raidbuffs :: Fractional a => a -> a

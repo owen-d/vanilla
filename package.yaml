@@ -35,9 +35,9 @@ library:
   source-dirs: src
 
 executables:
-  vanilla:
+  engine:
     main:                Main.hs
-    source-dirs:         app
+    source-dirs:         app/engine
     ghc-options:
     - -threaded
     - -rtsopts
@@ -46,9 +46,9 @@ executables:
     - vanilla
 
 tests:
-  vanilla-test:
+  engine-test:
     main:                Main.hs
-    source-dirs:         test
+    source-dirs:         test/engine
     ghc-options:
     - -Wall
     # we don't want to warn of orphans in tests as we often adhoc impl things like QuickCheck's Arbitrary
