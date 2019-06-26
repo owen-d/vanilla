@@ -151,8 +151,8 @@ spellDistWithReserved xs reserved =
     populate _ _ [] = []
     populate maxD timeLeft (y:ys) = (y, nTimes) : populate maxD timeLeft' ys
       where
-        maxCasts = maxInterval / (maxCdOrDuration y)
-        nTimes = max 0 $ min maxCasts $ timeLeft / (castTime y)
+        maxTimes = maxInterval / (maxCdOrDuration y)
+        nTimes = max 0 $ min maxTimes $ timeLeft / (castTime y)
         timeLeft' = timeLeft - (nTimes * castTime y)
 
 
