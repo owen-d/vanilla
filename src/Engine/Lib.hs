@@ -13,6 +13,7 @@ import           Engine.PDeriv                      (Input (..), partials)
 import           Engine.Spells.Spell                (School (..), Spell)
 import           Engine.Table.SpellResult           (dps, spellDist)
 
+main :: IO ()
 main = sequence_ outputs
 
 output ::
