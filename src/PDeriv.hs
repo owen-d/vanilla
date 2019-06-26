@@ -1,8 +1,8 @@
-module Engine.PDeriv where
+module PDeriv where
 
-import           Engine.Character.Sheet (Character (..))
-import           Engine.Character.Spell (Stats (..))
-import           Engine.Spells.Spell    (School (..))
+import           Character.Sheet (Character (..))
+import           Character.Spell (Stats (..))
+import           Spells.Spell    (School (..))
 
 data Input
   = School School

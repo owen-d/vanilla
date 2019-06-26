@@ -1,9 +1,9 @@
-module Engine.Character.Classes.FireLock where
+module Character.Classes.FireLock where
 
-import           Engine.Character         (Character)
-import           Engine.Spells.Spell      (SType (..), School (..), Spell (..),
-                                           SpellClass (..), empty)
-import           Engine.Table.SpellResult (cast, expectedDmg, maxCritN)
+import           Character         (Character)
+import           Spells.Spell      (SType (..), School (..), Spell (..),
+                                    SpellClass (..), empty)
+import           Table.SpellResult (cast, expectedDmg, maxCritN)
 
 -- spells assume SM/Ruin pts in suppression
 

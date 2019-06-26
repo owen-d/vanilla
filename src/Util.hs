@@ -1,3 +1,3 @@
-module Engine.Util where
+module Util where
 
 notImplemented = error "not implemented"

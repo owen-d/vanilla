@@ -1,7 +1,7 @@
 module Spells.Gen where
 
-import           Engine.Spells.Spell
-import           Generic.Random        (genericArbitrary, uniform)
+import           Generic.Random  (genericArbitrary, uniform)
+import           Spells.Spell
 import           Test.Tasty.QuickCheck (Arbitrary (..))
 
 instance Arbitrary School where

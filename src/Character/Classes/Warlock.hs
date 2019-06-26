@@ -1,12 +1,12 @@
-module Engine.Character.Classes.Warlock where
+module Character.Classes.Warlock where
 
-import           Data.Function            (fix)
-import           Engine.Character         (Character)
-import           Engine.Dist              (Dist (..))
-import           Engine.Spells.Spell      (SType (..), School (..), Spell (..),
-                                           SpellClass (..), empty, mkModifiers)
-import           Engine.Table.SpellResult (cast, expectedDmg, maxCritN,
-                                           spellDistWithReserved)
+import           Character         (Character)
+import           Data.Function     (fix)
+import           Dist              (Dist (..))
+import           Spells.Spell      (SType (..), School (..), Spell (..),
+                                    SpellClass (..), empty, mkModifiers)
+import           Table.SpellResult (cast, expectedDmg, maxCritN,
+                                    spellDistWithReserved)
 
 -- spells assume SM/Ruin pts in suppression
 

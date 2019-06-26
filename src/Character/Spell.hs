@@ -1,10 +1,10 @@
 {-# LANGUAGE DeriveGeneric     #-}
 {-# LANGUAGE OverloadedStrings #-}
 
-module Engine.Character.Spell where
+module Character.Spell where
 
-import           Engine.Spells.Spell (School (..))
-import           GHC.Generics        (Generic)
+import           GHC.Generics (Generic)
+import           Spells.Spell (School (..))
 
 -- TODO: hit/crit should be affectable at the school and spell level, not just at the character-sheet
 data Stats =

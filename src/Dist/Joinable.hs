@@ -1,6 +1,6 @@
-module Engine.Dist.Joinable where
+module Dist.Joinable where
 
-import           Engine.Dist
+import           Dist
 
 -- join is syntactic sugar for joining all distributions with the same weight (1)
 join :: Distable a b => [a] ->  Dist b

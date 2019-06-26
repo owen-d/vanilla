@@ -3,7 +3,7 @@
 {-# LANGUAGE FunctionalDependencies #-}
 {-# LANGUAGE MultiParamTypeClasses  #-}
 
-module Engine.Dist where
+module Dist where
 
 
 import           Control.Applicative (Alternative (empty, (<|>)))

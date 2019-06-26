@@ -1,7 +1,7 @@
 {-# LANGUAGE DeriveGeneric     #-}
 {-# LANGUAGE OverloadedStrings #-}
 
-module Engine.Character.Phys where
+module Character.Phys where
 
 
 import           GHC.Generics (Generic)
