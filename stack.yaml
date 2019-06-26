@@ -1,3 +1,4 @@
 resolver: lts-13.24
 packages:
 - libs/engine
+- services/api

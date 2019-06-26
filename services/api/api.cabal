@@ -1,0 +1,93 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.31.1.
+--
+-- see: https://github.com/sol/hpack
+--
+-- hash: 31b42566605284d85856e7f824b878a3d14a21681f721b75e4add9c51653dca0
+
+name:           api
+version:        0.1.0.0
+description:    Please see the README on GitHub at <https://github.com/githubuser/vanilla#readme>
+homepage:       https://github.com/owen-d/vanilla/services/api#readme
+bug-reports:    https://github.com/owen-d/vanilla/services/api/issues
+author:         Author name here
+maintainer:     example@example.com
+copyright:      2019 Author name here
+license:        BSD3
+build-type:     Simple
+
+source-repository head
+  type: git
+  location: https://github.com/owen-d/vanilla/services/api
+
+library
+  exposed-modules:
+      ApiType
+      LibMain
+  other-modules:
+      Paths_api
+  hs-source-dirs:
+      src
+  ghc-options: -W -Werror
+  build-depends:
+      aeson
+    , base >=4.7 && <5
+    , bytestring
+    , containers
+    , engine
+    , servant
+    , servant-server
+    , string-conv
+    , text
+    , warp
+  default-language: Haskell2010
+
+executable api
+  main-is: Main.hs
+  other-modules:
+      Paths_api
+  hs-source-dirs:
+      app
+  ghc-options: -W -Werror -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      aeson
+    , api
+    , base >=4.7 && <5
+    , bytestring
+    , containers
+    , engine
+    , servant
+    , servant-server
+    , string-conv
+    , text
+    , warp
+  default-language: Haskell2010
+
+test-suite api-test
+  type: exitcode-stdio-1.0
+  main-is: Main.hs
+  other-modules:
+      Paths_api
+  hs-source-dirs:
+      test
+  ghc-options: -W -Werror -Wall -fno-warn-orphans -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      QuickCheck
+    , aeson
+    , api
+    , base >=4.7 && <5
+    , bytestring
+    , containers
+    , engine
+    , generic-random
+    , quickcheck-instances
+    , servant
+    , servant-server
+    , string-conv
+    , tasty
+    , tasty-hunit
+    , tasty-quickcheck
+    , text
+    , warp
+  default-language: Haskell2010

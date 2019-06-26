@@ -1,0 +1,73 @@
+name:                api
+version:             0.1.0.0
+github:              "owen-d/vanilla/services/api"
+license:             BSD3
+author:              "Author name here"
+maintainer:          "example@example.com"
+copyright:           "2019 Author name here"
+
+# extra-source-files:
+# - README.md
+# - ChangeLog.md
+
+# Metadata used when publishing your package
+# synopsis:            Short description of your package
+# category:            Web
+
+# To avoid duplicated efforts in documentation and dealing with the
+# complications of embedding Haddock markup inside cabal files, it is
+# common to point users to the README.md file.
+description:         Please see the README on GitHub at <https://github.com/githubuser/vanilla#readme>
+
+dependencies:
+- base >= 4.7 && < 5
+- text
+- bytestring
+- string-conv
+- containers
+- servant
+- servant-server
+- warp
+- aeson
+- engine
+
+
+ghc-options:
+  - -W
+  - -Werror
+
+library:
+  source-dirs: src
+
+executables:
+  api:
+    main:                Main.hs
+    source-dirs:         app
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - api
+
+tests:
+  api-test:
+    main:                Main.hs
+    source-dirs:         test
+    ghc-options:
+    - -Wall
+    # we don't want to warn of orphans in tests as we often adhoc impl things like QuickCheck's Arbitrary
+    # and it'd be a pain to newtype wrap everything
+    # These classes of bugs should be caught while compiling the lib/executables (i hope)
+    - -fno-warn-orphans
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - api
+    - generic-random
+    - QuickCheck
+    - quickcheck-instances
+    - tasty
+    - tasty-quickcheck
+    - tasty-hunit
