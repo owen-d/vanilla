@@ -1,9 +1,8 @@
 module Character
-  ( Character(..)
-  , CClass(..)
-  , Race(..)
-  , Resistances(..)
+  ( module Character.Sheet
+  , module Character.Spell
   ) where
 
-import           Character.Resistances (Resistances (..))
-import           Character.Sheet       (CClass (..), Character (..), Race (..))
+import           Character.Sheet
+import           Character.Spell
+

@@ -1,17 +1,17 @@
-module PDeriv where
+module EqPoints where
 
 import           Character.Sheet (Character (..))
 import           Character.Spell (Stats (..))
 import           Spells.Spell    (School (..))
 
-data Input
+data EqPoint
   = School School
   | SpellHit
   | SpellCrit
   deriving (Eq, Ord, Show)
 
-inputs :: [Input]
-inputs =
+eqPoints :: [EqPoint]
+eqPoints =
   [ School Arcane
   , School Fire
   , School Frost
@@ -22,8 +22,10 @@ inputs =
   , SpellCrit
   ]
 
-addInput :: Input -> Character -> Character
-addInput input character@Character {spellStats = original} =
+-- | add will add a stat to a character, evened out for item budgets
+-- | so that adding any stat will consume the same budget cost
+add :: EqPoint -> Character -> Character
+add input character@Character {spellStats = original} =
   character {spellStats = updated}
     -- https://vanilla-wow.fandom.com/wiki/Item_level
   where
@@ -39,12 +41,3 @@ addInput input character@Character {spellStats = original} =
         SpellHit      -> original {hit = hit original + 0.01}
         SpellCrit     -> original {crit = crit original + 0.01}
 
-partials :: (Fractional b) => (Character -> b) -> [Input] -> Character -> [(Input, b)]
-partials fn vars character =
-  map (calc character) vars
-  where
-    calc c input = (input, y'-y)
-      where
-        c' = addInput input c
-        y = fn c
-        y' = fn c'

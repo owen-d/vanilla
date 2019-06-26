@@ -6,55 +6,34 @@ import           Character                   (CClass (..), Character (..),
                                               Race (..))
 import qualified Character.Classes.FireMage  as FireMage
 import qualified Character.Classes.FrostMage as FrostMage
+import           Character.Classes.Spec      (Spec (..))
 import qualified Character.Classes.Warlock   as Wlock
 import qualified Character.Spell             as CSp
-import           Dist                        (Distable (..))
-import           PDeriv                      (Input (..), partials)
-import           Spells.Spell                (School (..), Spell)
-import           Table.SpellResult           (dps, spellDist)
+import           Spells.Calc                 (derivatives)
 
+main :: IO ()
 main = sequence_ outputs
 
-output ::
-     (Show b, Fractional b, Distable c (Spell Character))
-  => String
-  -> [Input]
-  -> Character
-  -> c
-  -> (Float -> b)
-  -> IO ()
-output label vars char sDist raidbuffs = do
-  putStrLn $  "\ndps (" ++ label ++ "): " ++ (show (f char))
-  mapM_ print $ partials f vars char
-  where
-    -- raidbuffs calcing at the end should be fine due to distributive property
-    -- of multiplication over addition. Also b/c only one spell school is used
-    f c = raidbuffs $ dps (toDist sDist) c boss
+output :: String -> Spec -> Character -> IO ()
+output label spec char = do
+  putStrLn $ "\ndps (" ++ label ++ "): "
+  mapM_ (putStrLn . show) (derivatives spec char)
 
 outputs :: [IO ()]
 outputs =
   [ output
       "warlock"
-      (base ++ [School Shadow])
+      Wlock.warlock
       hero
-      (Wlock.spellDist shadowDmg)
-      Wlock.raidbuffs
   , output
       "frost mage"
-      (base ++ [School Frost])
+      FrostMage.frostMage
       hero
-      (spellDist FrostMage.spellPrios)
-      FrostMage.raidbuffs
   , output
       "fire mage"
-      (base ++ [School Fire])
+      FireMage.fireMage
       hero
-      (spellDist FireMage.spellPrios)
-      FireMage.raidbuffs
   ]
-  where
-    base = [SpellHit, SpellCrit]
-    shadowDmg = CSp.shadow . spellStats $ hero
 
 
 hero :: Character
@@ -79,23 +58,5 @@ hero =
           , CSp.crit = 0.14
           , CSp.hit = 0.06
           }
-    , guild = Nothing
-    }
-
-boss :: Character
-boss =
-  Character
-    { level = 63
-    , cClass = Warrior
-    , race = Human
-    , stamina = 100
-    , strength = 100
-    , agility = 100
-    , spirit = 100
-    , resistances = mempty
-    , defenses = mempty
-    , meleeStats = mempty
-    , rangedStats = mempty
-    , spellStats = mempty
     , guild = Nothing
     }

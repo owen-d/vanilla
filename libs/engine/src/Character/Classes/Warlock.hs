@@ -1,20 +1,35 @@
 module Character.Classes.Warlock where
 
-import           Character         (Character)
-import           Data.Function     (fix)
-import           Dist              (Dist (..))
-import           Spells.Spell      (SType (..), School (..), Spell (..),
-                                    SpellClass (..), empty, mkModifiers)
-import           Table.SpellResult (cast, expectedDmg, maxCritN,
-                                    spellDistWithReserved)
+import           Character              (Character (spellStats))
+import           Character.Classes.Spec (Spec (..))
+import           Character.Spell        (Stats (shadow))
+import           Data.Function          (fix)
+import           Dist                   (Dist (..))
+import           EqPoints               (EqPoint (..))
+import           Spells.Spell           (SType (..), School (..), Spell (..),
+                                         SpellClass (..), empty, mkModifiers)
+import           Table.SpellResult      (cast, expectedDmg, maxCritN,
+                                         spellDistWithReserved)
 
 -- spells assume SM/Ruin pts in suppression
+warlock :: Spec
+warlock =
+  Spec
+    { attrs = vars
+    , mkSpells = \c -> spellDist $ (shadow . spellStats) c
+    , buffScale = raidbuffs
+    }
+
+
 
 raidbuffs :: Fractional a => a -> a
 raidbuffs y = y * (1 + 0.15 + 0.1 + 0.1) -- shadow weaving + curse of shadows + shadow mastery
 
 spellPrios :: [Spell Character]
 spellPrios = [curseOfDoom, shadowBolt]
+
+vars :: [EqPoint]
+vars = [SpellHit, SpellCrit, School Shadow]
 
 
 -- fix :: (a -> a) -> a

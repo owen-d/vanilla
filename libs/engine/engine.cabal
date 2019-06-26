@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: a875da5bb59ea91e9c2eb9484500b5e88a67e0cf8c4b481c8456ff1e4f73873d
+-- hash: 931e257bdb28922d5bdb88885afa5d33c226aa8dbe9241bd8212cbaf5a1af748
 
 name:           engine
 version:        0.1.0.0
@@ -24,9 +24,9 @@ source-repository head
 library
   exposed-modules:
       Character
-      Character.Classes.FireLock
       Character.Classes.FireMage
       Character.Classes.FrostMage
+      Character.Classes.Spec
       Character.Classes.Warlock
       Character.Defenses
       Character.Phys
@@ -35,8 +35,9 @@ library
       Character.Spell
       Dist
       Dist.Joinable
+      EqPoints
       Lib
-      PDeriv
+      Spells.Calc
       Spells.Spell
       Table.SpellResult
       Util

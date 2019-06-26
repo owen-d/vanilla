@@ -10,6 +10,18 @@ import qualified Character.Spell       as Spell
 import           Data.Text             as T
 import           GHC.Generics          (Generic)
 
+class HasLevel a where
+  getLevel :: a -> Float
+
+class HasSpellStats a where
+  getSpellStats :: a -> Spell.Stats
+
+instance HasLevel Character where
+  getLevel = level
+
+instance HasSpellStats Character where
+  getSpellStats = spellStats
+
 data Character =
   Character
     { level       :: Float
@@ -38,6 +50,24 @@ empty60 =
     , strength = 0
     , agility = 0
     , spirit = 0
+    , resistances = mempty
+    , defenses = mempty
+    , meleeStats = mempty
+    , rangedStats = mempty
+    , spellStats = mempty
+    , guild = Nothing
+    }
+
+boss :: Character
+boss =
+  Character
+    { level = 63
+    , cClass = Warrior
+    , race = Human
+    , stamina = 100
+    , strength = 100
+    , agility = 100
+    , spirit = 100
     , resistances = mempty
     , defenses = mempty
     , meleeStats = mempty
