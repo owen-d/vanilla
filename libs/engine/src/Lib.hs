@@ -2,14 +2,15 @@
 
 module Lib where
 
-import           Character                   (CClass (..), Character (..),
-                                              Race (..))
-import qualified Character.Classes.FireMage  as FireMage
-import qualified Character.Classes.FrostMage as FrostMage
-import           Character.Classes.Spec      (Spec (..))
-import qualified Character.Classes.Warlock   as Wlock
-import qualified Character.Spell             as CSp
-import           Spells.Calc                 (calc, derivatives)
+import           Character                    (CClass (..), Character (..),
+                                               Race (..))
+import qualified Character.Classes.ArcaneMage as ArcaneMage
+import qualified Character.Classes.FireMage   as FireMage
+import qualified Character.Classes.FrostMage  as FrostMage
+import           Character.Classes.Spec       (Spec (..))
+import qualified Character.Classes.Warlock    as Wlock
+import qualified Character.Spell              as CSp
+import           Spells.Calc                  (calc, derivatives)
 
 main :: IO ()
 main = sequence_ outputs
@@ -21,18 +22,10 @@ output label spec char = do
 
 outputs :: [IO ()]
 outputs =
-  [ output
-      "warlock"
-      Wlock.warlock
-      hero
-  , output
-      "frost mage"
-      FrostMage.frostMage
-      hero
-  , output
-      "fire mage"
-      FireMage.fireMage
-      hero
+  [ output "warlock" Wlock.warlock hero
+  , output "frost mage" FrostMage.frostMage hero
+  , output "arcane mage" ArcaneMage.arcaneMage hero
+  , output "fire mage" FireMage.fireMage hero
   ]
 
 

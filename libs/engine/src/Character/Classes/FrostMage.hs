@@ -12,12 +12,12 @@ frostMage =
   Spec
     { attrs = vars
     , mkSpells = const (spellDist spellPrios)
-    , buffScale = raidbuffs
+    , buffScale = \y -> y * buffs
     }
 
 
-raidbuffs :: Fractional a => a -> a
-raidbuffs y = y * (1 + 0.06 + 0.1) -- ice shards * curse of shadows
+buffs :: Float
+buffs = (1 + 0.06 + 0.1) -- ice shards * curse of shadows
 
 vars :: [EqPoint]
 vars = [SpellHit, SpellCrit, School Frost]
@@ -34,7 +34,7 @@ frostBolt =
     , dmg = 535.5
     , coeff = 3 / 3.5
     , hitBonus = 0.06
-    , critBonus = 0.10
+    , critBonus = 0.10 -- winter's chill
     , critCoeff = 2
     , castTime = 2.5
     }
