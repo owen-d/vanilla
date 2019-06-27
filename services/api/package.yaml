@@ -29,6 +29,7 @@ dependencies:
 - servant-server
 - warp
 - aeson
+- aeson-casing
 - engine
 
 

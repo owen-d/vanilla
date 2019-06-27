@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 31b42566605284d85856e7f824b878a3d14a21681f721b75e4add9c51653dca0
+-- hash: 82fd5a8893265d1848a9603001eaa94ced8b5ec083d6498d93ff6a27472a862a
 
 name:           api
 version:        0.1.0.0
@@ -25,6 +25,7 @@ library
   exposed-modules:
       ApiType
       LibMain
+      Routes.Derivatives
   other-modules:
       Paths_api
   hs-source-dirs:
@@ -32,6 +33,7 @@ library
   ghc-options: -W -Werror
   build-depends:
       aeson
+    , aeson-casing
     , base >=4.7 && <5
     , bytestring
     , containers
@@ -52,6 +54,7 @@ executable api
   ghc-options: -W -Werror -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       aeson
+    , aeson-casing
     , api
     , base >=4.7 && <5
     , bytestring
@@ -75,6 +78,7 @@ test-suite api-test
   build-depends:
       QuickCheck
     , aeson
+    , aeson-casing
     , api
     , base >=4.7 && <5
     , bytestring

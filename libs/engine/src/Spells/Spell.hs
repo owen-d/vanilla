@@ -3,8 +3,12 @@
 
 module Spells.Spell where
 
-
-import           GHC.Generics (Generic)
+import           Data.Aeson        (FromJSON (..),
+                                    Options (constructorTagModifier),
+                                    ToJSON (..), defaultOptions,
+                                    genericParseJSON, genericToJSON)
+import           Data.Aeson.Casing (camelCase)
+import           GHC.Generics      (Generic)
 
 data School
   = Arcane
@@ -14,6 +18,14 @@ data School
   | Nature
   | Shadow
   deriving (Eq, Ord, Show, Generic)
+
+instance FromJSON School where
+  parseJSON = genericParseJSON defaultOptions { constructorTagModifier = camelCase }
+
+instance ToJSON School where
+  toJSON = genericToJSON defaultOptions { constructorTagModifier = camelCase }
+
+
 
 data SType = Direct | Duration | Buff
   deriving (Eq, Ord, Show, Generic)

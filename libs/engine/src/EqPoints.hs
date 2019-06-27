@@ -1,14 +1,30 @@
+{-# LANGUAGE DeriveGeneric #-}
+
 module EqPoints where
 
-import           Character.Sheet (Character (..))
-import           Character.Spell (Stats (..))
-import           Spells.Spell    (School (..))
+import           Character.Sheet   (Character (..))
+import           Character.Spell   (Stats (..))
+import           Data.Aeson        (FromJSON (..),
+                                    Options (constructorTagModifier),
+                                    ToJSON (..), defaultOptions,
+                                    genericParseJSON, genericToJSON)
+import           Data.Aeson.Casing (camelCase)
+import           GHC.Generics      (Generic)
+import           Spells.Spell      (School (..))
+
 
 data EqPoint
   = School School
   | SpellHit
   | SpellCrit
-  deriving (Eq, Ord, Show)
+  deriving (Eq, Ord, Show, Generic)
+
+instance FromJSON EqPoint where
+  parseJSON = genericParseJSON defaultOptions { constructorTagModifier = camelCase }
+
+instance ToJSON EqPoint where
+  toJSON = genericToJSON defaultOptions { constructorTagModifier = camelCase }
+
 
 eqPoints :: [EqPoint]
 eqPoints =

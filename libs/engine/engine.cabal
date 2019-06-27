@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 931e257bdb28922d5bdb88885afa5d33c226aa8dbe9241bd8212cbaf5a1af748
+-- hash: dd1eb2326ba04265722d61dc5bda9effe7e54eb53f239ca0587a6782b14d3e4c
 
 name:           engine
 version:        0.1.0.0
@@ -47,7 +47,9 @@ library
       src
   ghc-options: -W -Werror
   build-depends:
-      base >=4.7 && <5
+      aeson
+    , aeson-casing
+    , base >=4.7 && <5
     , bytestring
     , containers
     , string-conv
@@ -68,6 +70,8 @@ test-suite engine-test
   ghc-options: -W -Werror -Wall -fno-warn-orphans -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       QuickCheck
+    , aeson
+    , aeson-casing
     , base >=4.7 && <5
     , bytestring
     , containers

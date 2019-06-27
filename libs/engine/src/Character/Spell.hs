@@ -3,6 +3,7 @@
 
 module Character.Spell where
 
+import           Data.Aeson   (FromJSON, ToJSON)
 import           GHC.Generics (Generic)
 import           Spells.Spell (School (..))
 
@@ -21,6 +22,9 @@ data Stats =
     , crit    :: Float
     }
   deriving (Show, Generic)
+
+instance  FromJSON Stats
+instance ToJSON Stats
 
 instance Semigroup Stats where
   a <> b =

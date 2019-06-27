@@ -6,30 +6,14 @@
 module ApiType where
 
 
-import           Data.Aeson   (FromJSON, ToJSON)
-import           Data.Proxy   (Proxy (..))
-import qualified Data.Text    as T
-import           GHC.Generics (Generic)
-import           Servant      (Server)
-import           Servant.API
+import           Data.Proxy         (Proxy (..))
+import qualified Routes.Derivatives as Derivatives
+import           Servant            (Server)
 
-type Api = "users" :> Get '[JSON] [User]
+type Api = Derivatives.Route
 
 api :: Proxy Api
 api = Proxy
 
-data User =
-  User
-    { name :: T.Text
-    , age  :: Int
-    }
-  deriving (Generic, Show)
-
-instance FromJSON User
-instance ToJSON User
-
-users :: [User]
-users = [User "john" 30, User "jane" 30]
-
 server :: Server Api
-server = return users
+server = Derivatives.handle
