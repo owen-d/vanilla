@@ -14,14 +14,28 @@ import           Character.Spell             (Stats (..))
 import           Data.Aeson                  (FromJSON, ToJSON)
 import           EqPoints                    (EqPoint)
 import           GHC.Generics                (Generic)
-import           Servant.API                 ((:>), JSON, Post, ReqBody)
-import           Spells.Calc                 (derivatives)
+import           Servant                     (Server)
+import           Servant.API                 ((:<|>) (..), (:>), JSON, Post,
+                                              ReqBody)
+import           Spells.Calc                 (calc, derivatives)
 
-type Route = "equivalence" :> ReqBody '[JSON] ReqFields :> Post '[JSON] [(EqPoint, Float)]
+type Routes =
+  "equivalence" :> ReqBody '[JSON] ReqFields :> Post '[JSON] [(EqPoint, Float)]
+  :<|> "dps" :> ReqBody '[JSON] ReqFields :> Post '[JSON] Float
 
-handle :: Monad m => ReqFields -> m [(EqPoint, Float)]
-handle ReqFields {stats = stats', spec = identifier} =
+handlers :: Server Routes
+handlers = handleDerivatives
+  :<|> handleDPS
+
+handleDerivatives :: Monad m => ReqFields -> m [(EqPoint, Float)]
+handleDerivatives ReqFields {stats = stats', spec = identifier} =
   return $ derivatives (toSpec identifier) char
+  where
+    char = empty60 {spellStats = stats'}
+
+handleDPS :: Monad m => ReqFields -> m Float
+handleDPS ReqFields {stats = stats', spec = identifier} =
+  return $ calc (toSpec identifier) char
   where
     char = empty60 {spellStats = stats'}
 

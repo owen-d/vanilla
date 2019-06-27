@@ -5,11 +5,11 @@
     "frost": 200,
     "holy": 0,
     "nature": 0,
-    "shadow": 0,
+    "shadow": 200,
     "healing": 0,
     "hit": 0.04,
     "pen": 0,
     "crit": 0.12
   },
-  "spec": "FireMage"
+  "spec": "Warlock"
 }

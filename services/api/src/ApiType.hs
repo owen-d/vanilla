@@ -10,10 +10,10 @@ import           Data.Proxy         (Proxy (..))
 import qualified Routes.Derivatives as Derivatives
 import           Servant            (Server)
 
-type Api = Derivatives.Route
+type Api = Derivatives.Routes
 
 api :: Proxy Api
 api = Proxy
 
 server :: Server Api
-server = Derivatives.handle
+server = Derivatives.handlers
