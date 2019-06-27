@@ -39,7 +39,7 @@ instance Foldable Dist where
   foldMap _ (Dist [])         = mempty
   foldMap f (Dist ((x,_):xs)) = f x <> foldMap f (Dist xs)
 
--- TODO: unsure of how I want to impl (<|>), but using `guard` is too useful
+-- | TODO: unsure of how I want to impl (<|>), but using `guard` is too useful
 -- Therefore default to (>>)
 instance Alternative Dist where
   empty = Dist []
@@ -50,31 +50,31 @@ uniform [] = empty
 uniform xs = Dist [(x, 1.0/ln) | x <- xs]
   where ln = (fromIntegral . length) xs
 
--- probability of an event occuring
+-- | probability of an event occuring
 (??) :: (a -> Bool) -> Dist a -> Float
 (??) p = sum . map snd . filter (p . fst) . unDist
 
--- distribution that matches a predicate
+-- | distribution that matches a predicate
 distWhere :: (a -> Bool) -> Dist a -> Dist a
 distWhere f dist = do
   x <- dist
   guard (f x)
   return x
 
--- given a base distribution, yields a distribution of the list of choices in each round
+-- | given a base distribution, yields a distribution of the list of choices in each round
 rounds :: Int -> Dist a -> Dist [a]
 rounds = roundsWith (:) []
 
--- version of rounds that uses mappend
+-- | version of rounds that uses mappend
 roundsM :: (Monoid a) => Int -> Dist a -> Dist a
 roundsM = roundsWith (<>) mempty
 
--- rounds with a function to map distributions together n times from a starting value
+-- | rounds with a function to map distributions together n times from a starting value
 roundsWith :: (a -> b -> b) -> b -> Int -> Dist a -> Dist b
 roundsWith _ acc 0 _    = Dist [(acc,1)]
 roundsWith f acc n dist = f <$> dist <*> roundsWith f acc (n - 1) dist
 
--- adds the probabilties for all occurrences in a distribution
+-- | adds the probabilties for all occurrences in a distribution
 totalProb :: Dist a -> Float
 totalProb (Dist xs) = sum $ map snd xs
 
@@ -85,18 +85,19 @@ softmax dist@ (Dist xs) =
   where
     ps = totalProb dist
 
--- coalesceWith reduces a distribution to a single value using each occurrence's probability
+-- | coalesceWith reduces a distribution to a single value using each occurrence's probability
 coalesceWith :: (Float -> a -> b -> b) -> b -> Dist a -> b
 coalesceWith _ acc (Dist []) = acc
 coalesceWith f acc (Dist ((x,p):xs)) =
   f p x $ coalesceWith f acc (Dist xs)
 
+-- | run prints the probabilities of a distribution
 run :: (Show a, Ord a) => Dist a -> IO ()
 run (Dist xs) =
     forM_ (M.toList $ M.fromListWith (+) xs) $ \(x, p) ->
         printf "%.3f %s\n" p (show x)
 
--- d6 :: Dist Int
+-- | d6 is a six sided die roll
 d6 :: Dist Int
 d6 = Dist [(x, 1 / 6) | x <- [1 .. 6]]
 

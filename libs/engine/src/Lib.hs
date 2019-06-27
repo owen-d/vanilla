@@ -9,14 +9,14 @@ import qualified Character.Classes.FrostMage as FrostMage
 import           Character.Classes.Spec      (Spec (..))
 import qualified Character.Classes.Warlock   as Wlock
 import qualified Character.Spell             as CSp
-import           Spells.Calc                 (derivatives)
+import           Spells.Calc                 (calc, derivatives)
 
 main :: IO ()
 main = sequence_ outputs
 
 output :: String -> Spec -> Character -> IO ()
 output label spec char = do
-  putStrLn $ "\ndps (" ++ label ++ "): "
+  putStrLn $ "\ndps (" ++ label ++ "): " ++ (show $ calc spec char)
   mapM_ (putStrLn . show) (derivatives spec char)
 
 outputs :: [IO ()]
@@ -52,11 +52,11 @@ hero =
     , rangedStats = mempty
     , spellStats =
         mempty
-          { CSp.shadow = 400
-          , CSp.frost = 400
-          , CSp.fire = 400
-          , CSp.crit = 0.14
-          , CSp.hit = 0.06
+          { CSp.shadow = 200
+          , CSp.frost = 200
+          , CSp.fire = 200
+          , CSp.crit = 0.15
+          , CSp.hit = 0.04
           }
     , guild = Nothing
     }

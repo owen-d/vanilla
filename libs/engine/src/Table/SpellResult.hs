@@ -165,4 +165,4 @@ dps sDist caster target =
       s <- softmax sDist
       (byCastTime $ Sp.castTime s) <$> cast s caster target
     byCastTime cTime result@ SpellResult{dmg=dmgDone} = result{dmg=dmgDone/cTime}  -- adjust damage by the cast time of the spell
-    reducer p SpellResult{dmg=dmgDone} acc = acc + p * (dmgDone)
+    reducer p SpellResult{dmg=dmgDone} acc = acc + p * dmgDone
