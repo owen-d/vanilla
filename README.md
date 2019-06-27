@@ -6,6 +6,9 @@
 - https://wowwiki.fandom.com/wiki/Spell_power_coefficient?oldid=1721745
 - https://vanilla-wow.fandom.com/wiki/Item_level
 
+## Assumptions
+- % damage buffs (curse of shadows, arcane power) are all summed together and then multiplied as a coefficient with damage from abilities. Needs confirmation that this is correct.
+
 ## Things we don't take into account/eventual TODO
 - fight longevity -- thus we underestimate int/spirit/mp5, for example.
 - healers not supported yet due to their complexity: how do we calc spell composition -- some fights you never use prayer of healing. just calculating hps values is specious so we eschew healing entirely for now.
@@ -16,3 +19,6 @@
 
 ## Shoutouts
 - http://web.engr.oregonstate.edu/~erwig/papers/PFP_JFP06.pdf
+
+## Ideas for later
+- calculating items like Talisman of Ephemeral Power (ToEP) can be viewed naively as `(Dist Character) >>= (Character -> Dist Spell)`.
