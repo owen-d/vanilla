@@ -11,8 +11,8 @@ import qualified Table.SpellResult      as SpRes
 
 -- | assuming something like
 -- https://classic.wowhead.com/talent-calc/druid/5110503002551351--0505031
-balanceDruid :: Spec
-balanceDruid =
+spec :: Spec
+spec =
   Spec
     { attrs = vars
     , mkSpells = const (spellDist spellPrios)

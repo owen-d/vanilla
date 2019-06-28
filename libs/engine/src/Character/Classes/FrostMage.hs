@@ -7,8 +7,8 @@ import           Spells.Spell           (SType (..), School (..), Spell (..),
                                          SpellClass (..), empty)
 import           Table.SpellResult      (spellDist)
 
-frostMage :: Spec
-frostMage =
+spec :: Spec
+spec =
   Spec
     { attrs = vars
     , mkSpells = const (spellDist spellPrios)

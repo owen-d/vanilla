@@ -23,11 +23,11 @@ output label spec char = do
 
 outputs :: [IO ()]
 outputs =
-  [ output "warlock" Wlock.warlock hero
-  , output "frost mage" FrostMage.frostMage hero
-  , output "arcane mage" ArcaneMage.arcaneMage hero
-  , output "fire mage" FireMage.fireMage hero
-  , output "moonkin" Moonkin.balanceDruid hero
+  [ output "warlock" Wlock.spec hero
+  , output "frost mage" FrostMage.spec hero
+  , output "arcane mage" ArcaneMage.spec hero
+  , output "fire mage" FireMage.spec hero
+  , output "moonkin" Moonkin.spec hero
   ]
 
 

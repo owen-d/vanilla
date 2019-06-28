@@ -60,8 +60,8 @@ instance ToJSON SpecIdentifier where
 
 toSpec :: SpecIdentifier -> Spec
 toSpec x = case x of
-  FireMage     -> FireMage.fireMage
-  FrostMage    -> FrostMage.frostMage
-  Warlock      -> Warlock.warlock
-  BalanceDruid -> Boomkin.balanceDruid
+  FireMage     -> FireMage.spec
+  FrostMage    -> FrostMage.spec
+  Warlock      -> Warlock.spec
+  BalanceDruid -> Boomkin.spec
 

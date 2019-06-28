@@ -12,8 +12,8 @@ import           Table.SpellResult      (cast, expectedDmg, maxCritN,
                                          spellDistWithReserved)
 
 -- spells assume SM/Ruin pts in suppression
-warlock :: Spec
-warlock =
+spec :: Spec
+spec =
   Spec
     { attrs = vars
     , mkSpells = \c -> spellDist $ (shadow . spellStats) c

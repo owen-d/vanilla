@@ -6,8 +6,8 @@ import           Character.Classes.Spec      (Spec (..))
 import           Spells.Spell                (Spell (..))
 import           Table.SpellResult           (spellDist)
 
-arcaneMage :: Spec
-arcaneMage =
+spec :: Spec
+spec =
   Spec
   { attrs = vars
   , mkSpells = const (spellDist spellPrios')
