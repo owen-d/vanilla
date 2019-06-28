@@ -47,7 +47,7 @@ mindFlay :: Spell Character
 mindFlay =
   empty
     { school = Shadow
-    , sClass = Harmful Direct
+    , sClass = Harmful Duration
     , manaCost = 205
     , dmg = 426
     , coeff = 3 / 3.5
