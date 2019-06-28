@@ -1,12 +1,15 @@
-module Character.Classes.FireMage where
+module Character.Classes.ElementalShaman where
 
 import           Character              (Character)
 import           Character.Classes.Spec (Spec (..))
 import           EqPoints               (EqPoint (..))
 import           Spells.Spell           (SType (..), School (..), Spell (..),
                                          SpellClass (..), empty)
+
 import           Table.SpellResult      (spellDist)
 
+-- | assuming something like
+-- https://classic.wowhead.com/talent-calc/shaman/55010105230215--5003231100501
 spec :: Spec
 spec =
   Spec
@@ -15,27 +18,25 @@ spec =
     , buffScale = buffs
     }
 
-
--- imp scorch * curse of elements
+-- | elemental shamans do not have any benefitting % based buffs
 buffs :: Fractional a => a -> a
-buffs y = y * (1 + 0.15 + 0.1 + 0.1) -- imp scorch + curse of elements + fire power
+buffs y = y
 
 spellPrios :: [Spell Character]
-spellPrios = [fireball]
+spellPrios = [lightningBolt]
 
 vars :: [EqPoint]
-vars = [SpellHit, SpellCrit, School Fire]
+vars = [SpellHit, SpellCrit, School Nature]
 
-fireball :: Spell Character
-fireball =
+lightningBolt :: Spell Character
+lightningBolt =
   empty
-    { school = Fire
+    { school = Nature
     , sClass = Harmful Direct
-    , manaCost = 290
-    , dmg = 638.5
-    , coeff = 3.5 / 3.5
-    , hitBonus = 0.06
-    , critBonus = 0.06
-    , critCoeff = 2.1 -- ignite
-    , castTime = 3
+    , manaCost = 265
+    , dmg = 443.5
+    , coeff = 3 / 3.5
+    , critBonus = 0.11
+    , critCoeff = 2
+    , castTime = 2
     }

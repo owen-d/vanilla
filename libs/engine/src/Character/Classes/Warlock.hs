@@ -17,13 +17,13 @@ spec =
   Spec
     { attrs = vars
     , mkSpells = \c -> spellDist $ (shadow . spellStats) c
-    , buffScale = raidbuffs
+    , buffScale = buffs
     }
 
 
 
-raidbuffs :: Fractional a => a -> a
-raidbuffs y = y * (1 + 0.15 + 0.1 + 0.1) -- shadow weaving + curse of shadows + shadow mastery
+buffs :: Fractional a => a -> a
+buffs y = y * (1 + 0.15 + 0.1 + 0.1) -- shadow weaving + curse of shadows + shadow mastery
 
 spellPrios :: [Spell Character]
 spellPrios = [curseOfDoom, shadowBolt]

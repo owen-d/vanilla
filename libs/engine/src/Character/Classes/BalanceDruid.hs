@@ -16,12 +16,12 @@ spec =
   Spec
     { attrs = vars
     , mkSpells = const (spellDist spellPrios)
-    , buffScale = raidbuffs
+    , buffScale = buffs
     }
 
 -- | curse of shadows + moonfury
-raidbuffs :: Fractional a => a -> a
-raidbuffs y = y * (1 + 0.1 + 0.1)
+buffs :: Fractional a => a -> a
+buffs y = y * (1 + 0.1 + 0.1)
 
 spellPrios :: [Spell Character]
 spellPrios = [starfire]

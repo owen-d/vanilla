@@ -5,21 +5,22 @@
 
 module Routes.Derivatives where
 
-import           Character                      (Character (spellStats),
-                                                 empty60)
-import qualified Character.Classes.BalanceDruid as Boomkin
-import qualified Character.Classes.FireMage     as FireMage
-import qualified Character.Classes.FrostMage    as FrostMage
-import           Character.Classes.Spec         (Spec)
-import qualified Character.Classes.Warlock      as Warlock
-import           Character.Spell                (Stats (..))
-import           Data.Aeson                     (FromJSON, ToJSON)
-import           EqPoints                       (EqPoint)
-import           GHC.Generics                   (Generic)
-import           Servant                        (Server)
-import           Servant.API                    ((:<|>) (..), (:>), JSON, Post,
-                                                 ReqBody)
-import           Spells.Calc                    (calc, derivatives)
+import           Character                         (Character (spellStats),
+                                                    empty60)
+import qualified Character.Classes.BalanceDruid    as Boomkin
+import qualified Character.Classes.ElementalShaman as EleSham
+import qualified Character.Classes.FireMage        as FireMage
+import qualified Character.Classes.FrostMage       as FrostMage
+import           Character.Classes.Spec            (Spec)
+import qualified Character.Classes.Warlock         as Warlock
+import           Character.Spell                   (Stats (..))
+import           Data.Aeson                        (FromJSON, ToJSON)
+import           EqPoints                          (EqPoint)
+import           GHC.Generics                      (Generic)
+import           Servant                           (Server)
+import           Servant.API                       ((:<|>) (..), (:>), JSON,
+                                                    Post, ReqBody)
+import           Spells.Calc                       (calc, derivatives)
 
 type Routes =
   "equivalence" :> ReqBody '[JSON] ReqFields :> Post '[JSON] [(EqPoint, Float)]
@@ -51,7 +52,12 @@ data ReqFields =
 instance FromJSON ReqFields
 instance ToJSON ReqFields
 
-data SpecIdentifier = FireMage | FrostMage | Warlock | BalanceDruid
+data SpecIdentifier
+  = FireMage
+  | FrostMage
+  | Warlock
+  | BalanceDruid
+  | ElementalShaman
   deriving (Show, Generic)
 
 instance FromJSON SpecIdentifier where
@@ -60,8 +66,9 @@ instance ToJSON SpecIdentifier where
 
 toSpec :: SpecIdentifier -> Spec
 toSpec x = case x of
-  FireMage     -> FireMage.spec
-  FrostMage    -> FrostMage.spec
-  Warlock      -> Warlock.spec
-  BalanceDruid -> Boomkin.spec
+  FireMage        -> FireMage.spec
+  FrostMage       -> FrostMage.spec
+  Warlock         -> Warlock.spec
+  BalanceDruid    -> Boomkin.spec
+  ElementalShaman -> EleSham.spec
 
