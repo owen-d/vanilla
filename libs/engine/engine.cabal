@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: ae240df14097908c568cbe5a6a6092f97caca23d9b65257115a7e31a418d6e55
+-- hash: b4aa8f2fb1ef70f4b1ecc008cd6cee2f6cb5440fb01324d3b6b1e7b6eb8c0a64
 
 name:           engine
 version:        0.1.0.0
@@ -26,8 +26,10 @@ library
       Character
       Character.Classes.ArcaneMage
       Character.Classes.BalanceDruid
+      Character.Classes.ElementalShaman
       Character.Classes.FireMage
       Character.Classes.FrostMage
+      Character.Classes.ShadowPriest
       Character.Classes.Spec
       Character.Classes.Warlock
       Character.Defenses

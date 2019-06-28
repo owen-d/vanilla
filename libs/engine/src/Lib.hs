@@ -9,6 +9,7 @@ import qualified Character.Classes.BalanceDruid    as Moonkin
 import qualified Character.Classes.ElementalShaman as EleSham
 import qualified Character.Classes.FireMage        as FireMage
 import qualified Character.Classes.FrostMage       as FrostMage
+import qualified Character.Classes.ShadowPriest    as SPriest
 import           Character.Classes.Spec            (Spec (..))
 import qualified Character.Classes.Warlock         as Wlock
 import qualified Character.Spell                   as CSp
@@ -30,6 +31,7 @@ outputs =
   , output "fire mage" FireMage.spec hero
   , output "moonkin" Moonkin.spec hero
   , output "ele sham" EleSham.spec hero
+  , output "shadow priest" SPriest.spec hero
   ]
 
 

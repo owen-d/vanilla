@@ -11,6 +11,7 @@ import qualified Character.Classes.BalanceDruid    as Boomkin
 import qualified Character.Classes.ElementalShaman as EleSham
 import qualified Character.Classes.FireMage        as FireMage
 import qualified Character.Classes.FrostMage       as FrostMage
+import qualified Character.Classes.ShadowPriest    as SPriest
 import           Character.Classes.Spec            (Spec)
 import qualified Character.Classes.Warlock         as Warlock
 import           Character.Spell                   (Stats (..))
@@ -58,6 +59,7 @@ data SpecIdentifier
   | Warlock
   | BalanceDruid
   | ElementalShaman
+  | ShadowPriest
   deriving (Show, Generic)
 
 instance FromJSON SpecIdentifier where
@@ -71,4 +73,5 @@ toSpec x = case x of
   Warlock         -> Warlock.spec
   BalanceDruid    -> Boomkin.spec
   ElementalShaman -> EleSham.spec
+  ShadowPriest    -> SPriest.spec
 
