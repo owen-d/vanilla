@@ -2,15 +2,16 @@
 
 module Lib where
 
-import           Character                    (CClass (..), Character (..),
-                                               Race (..))
-import qualified Character.Classes.ArcaneMage as ArcaneMage
-import qualified Character.Classes.FireMage   as FireMage
-import qualified Character.Classes.FrostMage  as FrostMage
-import           Character.Classes.Spec       (Spec (..))
-import qualified Character.Classes.Warlock    as Wlock
-import qualified Character.Spell              as CSp
-import           Spells.Calc                  (calc, derivatives)
+import           Character                      (CClass (..), Character (..),
+                                                 Race (..))
+import qualified Character.Classes.ArcaneMage   as ArcaneMage
+import qualified Character.Classes.BalanceDruid as Moonkin
+import qualified Character.Classes.FireMage     as FireMage
+import qualified Character.Classes.FrostMage    as FrostMage
+import           Character.Classes.Spec         (Spec (..))
+import qualified Character.Classes.Warlock      as Wlock
+import qualified Character.Spell                as CSp
+import           Spells.Calc                    (calc, derivatives)
 
 main :: IO ()
 main = sequence_ outputs
@@ -26,6 +27,7 @@ outputs =
   , output "frost mage" FrostMage.frostMage hero
   , output "arcane mage" ArcaneMage.arcaneMage hero
   , output "fire mage" FireMage.fireMage hero
+  , output "moonkin" Moonkin.balanceDruid hero
   ]
 
 
@@ -48,6 +50,7 @@ hero =
           { CSp.shadow = 200
           , CSp.frost = 200
           , CSp.fire = 200
+          , CSp.arcane = 200
           , CSp.crit = 0.15
           , CSp.hit = 0.04
           }

@@ -23,8 +23,7 @@ spellPrios' = map f spellPrios
     f spell = spell{critBonus = critBonus spell + 0.03 } -- arcane instability crit
 
 buffScale' :: Float -> Float
-buffScale' y = uptime *  y * (buffs' + 0.3)
-  + downtime * y * (buffs')
+buffScale' y = sum [uptime * y * (buffs' + 0.3), downtime * y * buffs']
   where
-    uptime = 15/(60 * 3) -- arcane power uptime as a fraction of cooldown
-    downtime = 1-uptime
+    uptime = 15 / (60 * 3) -- arcane power uptime probability via fraction of cooldown
+    downtime = 1 - uptime
