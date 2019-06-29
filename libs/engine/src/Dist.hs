@@ -41,7 +41,7 @@ instance Foldable Dist where
 
 instance Alternative Dist where
   empty = Dist []
-  (Dist (x:xs)) <|> _ = Dist (x:xs)
+  dist@(Dist (_:_)) <|> _ = dist
   _ <|> y = y
 
 
