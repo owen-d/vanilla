@@ -1,0 +1,205 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "version": "0.1",
+        "title": "Vanilla API",
+        "description": "This API helps calculate gear effectiveness"
+    },
+    "definitions": {
+        "ReqFields": {
+            "required": [
+                "stats",
+                "spec"
+            ],
+            "type": "object",
+            "properties": {
+                "stats": {
+                    "$ref": "#/definitions/Stats"
+                },
+                "spec": {
+                    "$ref": "#/definitions/SpecIdentifier"
+                }
+            }
+        },
+        "SpecIdentifier": {
+            "type": "string",
+            "enum": [
+                "FireMage",
+                "FrostMage",
+                "Warlock",
+                "BalanceDruid",
+                "ElementalShaman",
+                "ShadowPriest"
+            ]
+        },
+        "Stats": {
+            "required": [
+                "arcane",
+                "fire",
+                "frost",
+                "holy",
+                "nature",
+                "shadow",
+                "healing",
+                "hit",
+                "pen",
+                "crit"
+            ],
+            "type": "object",
+            "properties": {
+                "crit": {
+                    "format": "float",
+                    "type": "number"
+                },
+                "arcane": {
+                    "format": "float",
+                    "type": "number"
+                },
+                "hit": {
+                    "format": "float",
+                    "type": "number"
+                },
+                "shadow": {
+                    "format": "float",
+                    "type": "number"
+                },
+                "frost": {
+                    "format": "float",
+                    "type": "number"
+                },
+                "holy": {
+                    "format": "float",
+                    "type": "number"
+                },
+                "fire": {
+                    "format": "float",
+                    "type": "number"
+                },
+                "healing": {
+                    "format": "float",
+                    "type": "number"
+                },
+                "pen": {
+                    "format": "float",
+                    "type": "number"
+                },
+                "nature": {
+                    "format": "float",
+                    "type": "number"
+                }
+            }
+        },
+        "School": {
+            "type": "string",
+            "enum": [
+                "Arcane",
+                "Fire",
+                "Frost",
+                "Holy",
+                "Nature",
+                "Shadow"
+            ]
+        },
+        "EqPoint": {
+            "minProperties": 1,
+            "maxProperties": 1,
+            "type": "object",
+            "properties": {
+                "SpellCrit": {
+                    "example": [],
+                    "items": {},
+                    "maxItems": 0,
+                    "type": "array"
+                },
+                "SpellHit": {
+                    "example": [],
+                    "items": {},
+                    "maxItems": 0,
+                    "type": "array"
+                },
+                "School": {
+                    "$ref": "#/definitions/School"
+                }
+            }
+        }
+    },
+    "paths": {
+        "/dps": {
+            "post": {
+                "consumes": [
+                    "application/json;charset=utf-8"
+                ],
+                "responses": {
+                    "400": {
+                        "description": "Invalid `body`"
+                    },
+                    "200": {
+                        "schema": {
+                            "format": "float",
+                            "type": "number"
+                        },
+                        "description": ""
+                    }
+                },
+                "produces": [
+                    "application/json;charset=utf-8"
+                ],
+                "parameters": [
+                    {
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/ReqFields"
+                        },
+                        "in": "body",
+                        "name": "body"
+                    }
+                ]
+            }
+        },
+        "/equivalence": {
+            "post": {
+                "consumes": [
+                    "application/json;charset=utf-8"
+                ],
+                "responses": {
+                    "400": {
+                        "description": "Invalid `body`"
+                    },
+                    "200": {
+                        "schema": {
+                            "items": {
+                                "minItems": 2,
+                                "items": [
+                                    {
+                                        "$ref": "#/definitions/EqPoint"
+                                    },
+                                    {
+                                        "format": "float",
+                                        "type": "number"
+                                    }
+                                ],
+                                "maxItems": 2,
+                                "type": "array"
+                            },
+                            "type": "array"
+                        },
+                        "description": ""
+                    }
+                },
+                "produces": [
+                    "application/json;charset=utf-8"
+                ],
+                "parameters": [
+                    {
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/ReqFields"
+                        },
+                        "in": "body",
+                        "name": "body"
+                    }
+                ]
+            }
+        }
+    }
+}

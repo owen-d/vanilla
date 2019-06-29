@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 82fd5a8893265d1848a9603001eaa94ced8b5ec083d6498d93ff6a27472a862a
+-- hash: 205f7e8c5e4ddc252f106bd43c3b059f6e85958a35fd12d1c0345264910df445
 
 name:           api
 version:        0.1.0.0
@@ -38,6 +38,7 @@ library
     , bytestring
     , containers
     , engine
+    , lens
     , servant
     , servant-server
     , string-conv
@@ -60,9 +61,36 @@ executable api
     , bytestring
     , containers
     , engine
+    , lens
     , servant
     , servant-server
     , string-conv
+    , text
+    , warp
+  default-language: Haskell2010
+
+executable api-swagger
+  main-is: Main.hs
+  other-modules:
+      Paths_api
+  hs-source-dirs:
+      gen
+  ghc-options: -W -Werror -threaded -rtsopts -with-rtsopts=-N -fno-warn-orphans
+  build-depends:
+      aeson
+    , aeson-casing
+    , aeson-pretty
+    , api
+    , base >=4.7 && <5
+    , bytestring
+    , containers
+    , engine
+    , lens
+    , servant
+    , servant-server
+    , servant-swagger
+    , string-conv
+    , swagger2
     , text
     , warp
   default-language: Haskell2010
@@ -85,6 +113,7 @@ test-suite api-test
     , containers
     , engine
     , generic-random
+    , lens
     , quickcheck-instances
     , servant
     , servant-server
