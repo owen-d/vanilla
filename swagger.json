@@ -21,6 +21,28 @@
                 }
             }
         },
+        "Attr": {
+            "minProperties": 1,
+            "maxProperties": 1,
+            "type": "object",
+            "properties": {
+                "SpellCrit": {
+                    "example": [],
+                    "items": {},
+                    "maxItems": 0,
+                    "type": "array"
+                },
+                "SpellHit": {
+                    "example": [],
+                    "items": {},
+                    "maxItems": 0,
+                    "type": "array"
+                },
+                "School": {
+                    "$ref": "#/definitions/School"
+                }
+            }
+        },
         "SpecIdentifier": {
             "type": "string",
             "enum": [
@@ -99,28 +121,6 @@
                 "Nature",
                 "Shadow"
             ]
-        },
-        "EqPoint": {
-            "minProperties": 1,
-            "maxProperties": 1,
-            "type": "object",
-            "properties": {
-                "SpellCrit": {
-                    "example": [],
-                    "items": {},
-                    "maxItems": 0,
-                    "type": "array"
-                },
-                "SpellHit": {
-                    "example": [],
-                    "items": {},
-                    "maxItems": 0,
-                    "type": "array"
-                },
-                "School": {
-                    "$ref": "#/definitions/School"
-                }
-            }
         }
     },
     "paths": {
@@ -171,7 +171,7 @@
                                 "minItems": 2,
                                 "items": [
                                     {
-                                        "$ref": "#/definitions/EqPoint"
+                                        "$ref": "#/definitions/Attr"
                                     },
                                     {
                                         "format": "float",
