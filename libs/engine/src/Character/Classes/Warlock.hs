@@ -3,24 +3,22 @@ module Character.Classes.Warlock where
 import           Character              (Character (spellStats))
 import           Character.Classes.Spec (Spec (..))
 import           Character.Spell        (Stats (shadow))
+import           Data.Equivalence.Attr  (Attr (..))
 import           Data.Function          (fix)
 import           Dist                   (Dist (..))
-import           EqPoints               (EqPoint (..))
 import           Spells.Spell           (SType (..), School (..), Spell (..),
                                          SpellClass (..), empty, mkModifiers)
 import           Table.SpellResult      (cast, expectedDmg, maxCritN,
                                          spellDistWithReserved)
 
 -- spells assume SM/Ruin pts in suppression
-spec :: Spec
+spec :: Spec Attr
 spec =
   Spec
-    { attrs = vars
+    { inputs = attrs
     , mkSpells = \c -> spellDist $ (shadow . spellStats) c
     , buffScale = buffs
     }
-
-
 
 buffs :: Fractional a => a -> a
 buffs y = y * (1 + 0.15 + 0.1 + 0.1) -- shadow weaving + curse of shadows + shadow mastery
@@ -28,9 +26,8 @@ buffs y = y * (1 + 0.15 + 0.1 + 0.1) -- shadow weaving + curse of shadows + shad
 spellPrios :: [Spell Character]
 spellPrios = [curseOfDoom, shadowBolt]
 
-vars :: [EqPoint]
-vars = [SpellHit, SpellCrit, School Shadow]
-
+attrs :: [Attr]
+attrs = [SpellHit, SpellCrit, School Shadow]
 
 -- fix :: (a -> a) -> a
 -- fix f = let {x = f x} in x

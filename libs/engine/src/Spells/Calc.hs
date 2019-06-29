@@ -2,19 +2,18 @@ module Spells.Calc where
 
 import           Character.Classes.Spec (Spec (..))
 import           Character.Sheet        (Character (..), boss)
-import           EqPoints               (EqPoint)
-import qualified EqPoints               as EqPt
+import           Data.Equivalence.Class (HasEP (combine))
 import           Table.SpellResult      (dps)
 
 -- | estimates dps
-calc :: Spec -> Character -> Float
+calc :: Spec a -> Character -> Float
 calc spec char = (buffScale spec) $ dps (mkSpells spec char) char boss
 
-derivatives :: Spec -> Character -> [(EqPoint, Float)]
-derivatives spec@ Spec{attrs=vars} char =
+derivatives :: Spec a -> Character -> [(a, Float)]
+derivatives spec@ Spec{inputs=vars} char =
   map diff vars
   where
     diff point = (point, y'-y)
       where
         y = calc spec char
-        y' = calc spec $ EqPt.add point char
+        y' = calc spec $ combine point char

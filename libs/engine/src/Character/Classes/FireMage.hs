@@ -2,15 +2,15 @@ module Character.Classes.FireMage where
 
 import           Character              (Character)
 import           Character.Classes.Spec (Spec (..))
-import           EqPoints               (EqPoint (..))
+import           Data.Equivalence.Attr  (Attr (..))
 import           Spells.Spell           (SType (..), School (..), Spell (..),
                                          SpellClass (..), empty)
 import           Table.SpellResult      (spellDist)
 
-spec :: Spec
+spec :: Spec Attr
 spec =
   Spec
-    { attrs = vars
+    { inputs = attrs
     , mkSpells = const (spellDist spellPrios)
     , buffScale = buffs
     }
@@ -23,8 +23,8 @@ buffs y = y * (1 + 0.15 + 0.1 + 0.1) -- imp scorch + curse of elements + fire po
 spellPrios :: [Spell Character]
 spellPrios = [fireball]
 
-vars :: [EqPoint]
-vars = [SpellHit, SpellCrit, School Fire]
+attrs :: [Attr]
+attrs = [SpellHit, SpellCrit, School Fire]
 
 fireball :: Spell Character
 fireball =

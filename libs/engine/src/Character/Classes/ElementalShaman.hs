@@ -2,7 +2,7 @@ module Character.Classes.ElementalShaman where
 
 import           Character              (Character)
 import           Character.Classes.Spec (Spec (..))
-import           EqPoints               (EqPoint (..))
+import           Data.Equivalence.Attr  (Attr (..))
 import           Spells.Spell           (SType (..), School (..), Spell (..),
                                          SpellClass (..), empty)
 
@@ -10,10 +10,10 @@ import           Table.SpellResult      (spellDist)
 
 -- | assuming something like
 -- https://classic.wowhead.com/talent-calc/shaman/55010105230215--5003231100501
-spec :: Spec
+spec :: Spec Attr
 spec =
   Spec
-    { attrs = vars
+    { inputs = attrs
     , mkSpells = const (spellDist spellPrios)
     , buffScale = buffs
     }
@@ -25,8 +25,8 @@ buffs y = y
 spellPrios :: [Spell Character]
 spellPrios = [lightningBolt]
 
-vars :: [EqPoint]
-vars = [SpellHit, SpellCrit, School Nature]
+attrs :: [Attr]
+attrs = [SpellHit, SpellCrit, School Nature]
 
 lightningBolt :: Spell Character
 lightningBolt =

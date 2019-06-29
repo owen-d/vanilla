@@ -16,7 +16,7 @@ import           Character.Classes.Spec            (Spec)
 import qualified Character.Classes.Warlock         as Warlock
 import           Character.Spell                   (Stats (..))
 import           Data.Aeson                        (FromJSON, ToJSON)
-import           EqPoints                          (EqPoint)
+import           Data.Equivalence.Attr             (Attr)
 import           GHC.Generics                      (Generic)
 import           Servant                           (Server)
 import           Servant.API                       ((:<|>) (..), (:>), JSON,
@@ -24,14 +24,14 @@ import           Servant.API                       ((:<|>) (..), (:>), JSON,
 import           Spells.Calc                       (calc, derivatives)
 
 type Routes =
-  "equivalence" :> ReqBody '[JSON] ReqFields :> Post '[JSON] [(EqPoint, Float)]
+  "equivalence" :> ReqBody '[JSON] ReqFields :> Post '[JSON] [(Attr, Float)]
   :<|> "dps" :> ReqBody '[JSON] ReqFields :> Post '[JSON] Float
 
 handlers :: Server Routes
 handlers = handleDerivatives
   :<|> handleDPS
 
-handleDerivatives :: Monad m => ReqFields -> m [(EqPoint, Float)]
+handleDerivatives :: Monad m => ReqFields -> m [(Attr, Float)]
 handleDerivatives ReqFields {stats = stats', spec = identifier} =
   return $ derivatives (toSpec identifier) char
   where
@@ -66,7 +66,7 @@ instance FromJSON SpecIdentifier where
 
 instance ToJSON SpecIdentifier where
 
-toSpec :: SpecIdentifier -> Spec
+toSpec :: SpecIdentifier -> Spec Attr
 toSpec x = case x of
   FireMage        -> FireMage.spec
   FrostMage       -> FrostMage.spec

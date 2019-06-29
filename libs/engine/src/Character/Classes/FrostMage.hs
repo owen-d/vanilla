@@ -2,15 +2,15 @@ module Character.Classes.FrostMage where
 
 import           Character              (Character)
 import           Character.Classes.Spec (Spec (..))
-import           EqPoints               (EqPoint (..))
+import           Data.Equivalence.Attr  (Attr (..))
 import           Spells.Spell           (SType (..), School (..), Spell (..),
                                          SpellClass (..), empty)
 import           Table.SpellResult      (spellDist)
 
-spec :: Spec
+spec :: Spec Attr
 spec =
   Spec
-    { attrs = vars
+    { inputs = attrs
     , mkSpells = const (spellDist spellPrios)
     , buffScale = \y -> y * buffs
     }
@@ -19,8 +19,8 @@ spec =
 buffs :: Float
 buffs = (1 + 0.06 + 0.1) -- ice shards * curse of shadows
 
-vars :: [EqPoint]
-vars = [SpellHit, SpellCrit, School Frost]
+attrs :: [Attr]
+attrs = [SpellHit, SpellCrit, School Frost]
 
 spellPrios :: [Spell Character]
 spellPrios = [frostBolt]

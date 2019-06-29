@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: b4aa8f2fb1ef70f4b1ecc008cd6cee2f6cb5440fb01324d3b6b1e7b6eb8c0a64
+-- hash: 99939031886c21be8b3634047c14a1e18f95cf6499922f02154942573cccca3d
 
 name:           engine
 version:        0.1.0.0
@@ -37,9 +37,11 @@ library
       Character.Resistances
       Character.Sheet
       Character.Spell
+      Data.Equivalence.Attr
+      Data.Equivalence.Class
+      Data.Equivalence.ItemBudget
       Dist
       Dist.Joinable
-      EqPoints
       Lib
       Spells.Calc
       Spells.Spell

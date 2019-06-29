@@ -10,30 +10,42 @@ import qualified Character.Classes.ElementalShaman as EleSham
 import qualified Character.Classes.FireMage        as FireMage
 import qualified Character.Classes.FrostMage       as FrostMage
 import qualified Character.Classes.ShadowPriest    as SPriest
-import           Character.Classes.Spec            (Spec (..))
+import           Character.Classes.Spec            (Spec (..), sMap)
 import qualified Character.Classes.Warlock         as Wlock
 import qualified Character.Spell                   as CSp
+import           Data.Equivalence.Attr             (Attr)
+import           Data.Equivalence.Class            (HasEP (..))
+import           Data.Equivalence.ItemBudget       (EqPoint (EqPoint))
 import           Spells.Calc                       (calc, derivatives)
 
 main :: IO ()
-main = sequence_ outputs
+main = byAttr
 
-output :: String -> Spec -> Character -> IO ()
+byAttr :: IO ()
+byAttr = sequence_ $ outputs id
+
+byEq :: IO ()
+byEq = sequence_ $ outputs EqPoint
+
+output :: Show a => String -> Spec a -> Character -> IO ()
 output label spec char = do
   putStrLn $ "\ndps (" ++ label ++ "): " ++ (show $ calc spec char)
   mapM_ (putStrLn . show) (derivatives spec char)
 
-outputs :: [IO ()]
-outputs =
-  [ output "warlock" Wlock.spec hero
-  , output "frost mage" FrostMage.spec hero
-  , output "arcane mage" ArcaneMage.spec hero
-  , output "fire mage" FireMage.spec hero
-  , output "moonkin" Moonkin.spec hero
-  , output "ele sham" EleSham.spec hero
-  , output "shadow priest" SPriest.spec hero
-  ]
+outputs :: (Show b, HasEP b) => (Attr -> b) -> [IO ()]
+outputs f = flip map specPairs $
+  \(str, spec) -> output str (sMap f spec) hero
 
+specPairs :: [(String, Spec Attr)]
+specPairs =
+  [  ("warlock", Wlock.spec)
+  ,  ("frost mage", FrostMage.spec)
+  ,  ("arcane mage", ArcaneMage.spec)
+  ,  ("fire mage", FireMage.spec)
+  ,  ("moonkin", Moonkin.spec)
+  ,  ("ele sham", EleSham.spec)
+  ,  ("shadow priest", SPriest.spec)
+  ]
 
 hero :: Character
 hero =

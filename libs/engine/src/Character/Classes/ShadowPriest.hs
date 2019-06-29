@@ -2,19 +2,18 @@ module Character.Classes.ShadowPriest where
 
 import           Character              (Character)
 import           Character.Classes.Spec (Spec (..))
-import           EqPoints               (EqPoint (..))
+import           Data.Equivalence.Attr  (Attr (..))
 import           Spells.Spell           (SType (..), School (..), Spell (..),
                                          SpellClass (..), empty)
-
 import           Table.SpellResult      (spellDist)
 
 
 -- | spec assumes something like
 -- https://classicdb.ch/?talent#bxhRsZZVMgtcuRt
-spec :: Spec
+spec :: Spec Attr
 spec =
   Spec
-    { attrs = vars
+    { inputs = attrs
     , mkSpells = const (spellDist spellPrios')
     , buffScale = buffs
     }
@@ -27,9 +26,8 @@ spellPrios' = [mindBlast, mindFlay]
 buffs :: Fractional a => a -> a
 buffs y = y * (1 + 0.15 + 0.1 + 0.15) -- shadow weaving + curse of shadows + shadow mastery
 
-vars :: [EqPoint]
-vars = [SpellHit, SpellCrit, School Shadow]
-
+attrs :: [Attr]
+attrs = [SpellHit, SpellCrit, School Shadow]
 
 mindBlast :: Spell Character
 mindBlast =

@@ -1,15 +1,19 @@
-module Character.Classes.ArcaneMage where
+module Character.Classes.ArcaneMage
+  ( module Character.Classes.ArcaneMage
+  , attrs
+  ) where
 
 import           Character                   (Character)
-import           Character.Classes.FrostMage (buffs, spellPrios, vars)
+import           Character.Classes.FrostMage (attrs, buffs, spellPrios)
 import           Character.Classes.Spec      (Spec (..))
+import           Data.Equivalence.Attr       (Attr (..))
 import           Spells.Spell                (Spell (..))
 import           Table.SpellResult           (spellDist)
 
-spec :: Spec
+spec :: Spec Attr
 spec =
   Spec
-  { attrs = vars
+  { inputs = attrs
   , mkSpells = const (spellDist spellPrios')
   , buffScale = buffScale'
   }

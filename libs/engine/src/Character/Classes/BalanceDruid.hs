@@ -2,8 +2,8 @@ module Character.Classes.BalanceDruid where
 
 import           Character              (Character)
 import           Character.Classes.Spec (Spec (..))
+import           Data.Equivalence.Attr  (Attr (..))
 import           Dist                   (coalesceWith)
-import           EqPoints               (EqPoint (..))
 import           Spells.Spell           (SType (..), School (..), Spell (..),
                                          SpellClass (..), empty, mkModifiers)
 import           Table.SpellResult      (cast, spellDist)
@@ -11,10 +11,10 @@ import qualified Table.SpellResult      as SpRes
 
 -- | assuming something like
 -- https://classic.wowhead.com/talent-calc/druid/5110503002551351--0505031
-spec :: Spec
+spec :: Spec Attr
 spec =
   Spec
-    { attrs = vars
+    { inputs = attrs
     , mkSpells = const (spellDist spellPrios)
     , buffScale = buffs
     }
@@ -26,8 +26,8 @@ buffs y = y * (1 + 0.1 + 0.1)
 spellPrios :: [Spell Character]
 spellPrios = [starfire]
 
-vars :: [EqPoint]
-vars = [SpellHit, SpellCrit, School Arcane]
+attrs :: [Attr]
+attrs = [SpellHit, SpellCrit, School Arcane]
 
 starfire :: Spell Character
 starfire =
