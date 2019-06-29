@@ -7,13 +7,17 @@ import           Character             (Character (..))
 import           Character.Resistances (resistance)
 import           Character.Spell       (spellPower)
 import qualified Character.Spell       as CSp
-import           Dist                  (Dist (..), coalesceWith, distWhere,
-                                        rounds, softmax)
+import           Dist                  (Dist (..), coalesceWith, softmax)
+
 import           GHC.Generics          (Generic)
 import           Spells.Spell          (Modifier (..), SType (..), Spell (Spell, castTime, cooldown, duration),
                                         SpellClass (..), beneficial)
 import qualified Spells.Spell          as Sp
 import           Util                  (notImplemented)
+
+
+data SpellResolve = Miss | Hit | Crit
+  deriving (Show, Eq, Ord, Generic)
 
 -- currently we only model damage, although some types exist to specify healing/buffs
 data SpellResult =
@@ -23,25 +27,17 @@ data SpellResult =
     }
   deriving (Show, Eq, Generic)
 
-instance Semigroup SpellResult where
-  a <> b =
-    SpellResult {dmg = dmg a + dmg b, resolved = resolved a <> resolved b}
-
-instance Monoid SpellResult where
-  mempty = empty
-
 empty :: SpellResult
 empty = SpellResult {dmg = 0, resolved = Miss}
 
-data SpellResolve = Miss | Hit | Crit
-  deriving (Show, Eq, Ord, Generic)
+isMiss :: SpellResult -> Bool
+isMiss = (== Miss) . resolved
 
--- always prefer crit then hit then miss. Keeps track of best result
-instance Semigroup SpellResolve where
-  (<>) = max
+isHit :: SpellResult -> Bool
+isHit = (== Hit) . resolved
 
-instance Monoid SpellResolve where
-  mempty = Miss
+isCrit :: SpellResult -> Bool
+isCrit = (== Crit) . resolved
 
 hitChance :: Character -> Spell a -> Character -> Float
 hitChance caster spell target
@@ -119,21 +115,6 @@ expectedDmg dist =
   where
     f = foldr (\x acc-> dmg x + acc) 0
     avg = foldr (\(x,p) acc -> x * p + acc) 0
-
--- given a round distribution, yield the sub-distribution that contains up to N critical strikes
-maxCritN :: Dist SpellResult -> Int -> Int -> Dist [SpellResult]
-maxCritN dist nRounds n =
-  maxTimes dist predicate nRounds n
-  where
-    predicate = (== Crit) . resolved
-
--- generic variant
-maxTimes :: Dist a -> (a -> Bool) -> Int ->Int -> Dist [a]
-maxTimes dist predicate nRounds n =
-  distWhere predicate' populated
-  where
-    predicate' xs = length (filter predicate xs) <= n
-    populated = rounds nRounds dist
 
 -- given a list of spells in priority w/ cooldowns, yields an ideal spell distribution
 spellDist :: [Spell a] -> Dist (Spell a)

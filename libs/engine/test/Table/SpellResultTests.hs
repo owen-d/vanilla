@@ -11,7 +11,7 @@ import           Spells.Spell             (Spell (..), beneficial, harmful,
                                            isDirect)
 import qualified Spells.Spell             as Spell
 import           Table.Gen                ()
-import           Table.SpellResult        (SpellResolve, critChance, hitChance)
+import           Table.SpellResult        (critChance, hitChance)
 import           Test.QuickCheck.Property (Result (reason), failed, succeeded)
 import           Test.Tasty               (TestTree, testGroup)
 import           Test.Tasty.HUnit         (testCase, (@?=))
@@ -31,7 +31,6 @@ qcGroup =
     "(tested by QuickCheck)"
     [ prop_hitAlliesAlwaysSucceeds
     , prop_hitEnemiesMax99
-    , prop_SpellResolveSemigroupOrder
     , prop_uncrittableSpells
     , prop_critBonusesAdditive
     ]
@@ -76,17 +75,6 @@ prop_hitAlliesAlwaysSucceeds =
 prop_hitEnemiesMax99 :: TestTree
 prop_hitEnemiesMax99 =
   QC.testProperty "hit enemies never 100% probability" $ forAll harmfulSpells hitProbLessThan1
-
-prop_SpellResolveSemigroupOrder :: TestTree
-prop_SpellResolveSemigroupOrder =
-  QC.testProperty "Spell Resolve Semigroup preserves increasing order" test
-  where
-    test ((a,b) :: (SpellResolve, SpellResolve)) =
-      if combined == expected then succeeded else orderFail
-        where
-          expected = max a b
-          combined = a <> b
-          orderFail = failed {reason="SpellResolve did not preserve increasing order"}
 
 -- dots/buffs never crit
 prop_uncrittableSpells :: TestTree

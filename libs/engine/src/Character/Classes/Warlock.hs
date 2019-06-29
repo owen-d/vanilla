@@ -5,11 +5,12 @@ import           Character.Classes.Spec (Spec (..))
 import           Character.Spell        (Stats (shadow))
 import           Data.Equivalence.Attr  (Attr (..))
 import           Data.Function          (fix)
-import           Dist                   (Dist (..))
+import           Dist                   (Dist (..), rounds)
 import           Spells.Spell           (SType (..), School (..), Spell (..),
                                          SpellClass (..), empty, mkModifiers)
-import           Table.SpellResult      (cast, expectedDmg, maxCritN,
+import           Table.SpellResult      (cast, expectedDmg, isCrit,
                                          spellDistWithReserved)
+
 
 -- spells assume SM/Ruin pts in suppression
 spec :: Spec Attr
@@ -126,6 +127,10 @@ improvedSbMod spell@ Spell{critFlatBonuses=cfbs} caster target =
     bonusCoeff = 0.2
     charges = 4 -- charges of imp sb yielding 20% dmg each
     baseResult = cast spell caster target -- get damage distribution
-    bonus = bonusCoeff * (expectedDmg $ maxCritN baseResult charges 1)
-
-
+    bonus = bonusCoeff * (expectedDmg $ max1Crit charges)
+    max1Crit n = trim <$> rounds n baseResult
+      where
+        trim [] = []
+        trim (x:xs)
+          | isCrit x = [x]
+          | otherwise = x : trim xs

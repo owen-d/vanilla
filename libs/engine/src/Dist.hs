@@ -39,11 +39,11 @@ instance Foldable Dist where
   foldMap _ (Dist [])         = mempty
   foldMap f (Dist ((x,_):xs)) = f x <> foldMap f (Dist xs)
 
--- | TODO: unsure of how I want to impl (<|>), but using `guard` is too useful
--- Therefore default to (>>)
 instance Alternative Dist where
   empty = Dist []
-  (<|>) = (>>)
+  (Dist (x:xs)) <|> _ = Dist (x:xs)
+  _ <|> y = y
+
 
 uniform :: [a] -> Dist a
 uniform [] = empty
@@ -90,6 +90,11 @@ coalesceWith :: (Float -> a -> b -> b) -> b -> Dist a -> b
 coalesceWith _ acc (Dist []) = acc
 coalesceWith f acc (Dist ((x,p):xs)) =
   f p x $ coalesceWith f acc (Dist xs)
+
+-- | dedup will combine identical events, summing their probabilities
+dedup :: Ord a => Dist a -> Dist a
+dedup (Dist xs) =
+  Dist $ M.toList $ M.fromListWith (+) xs
 
 -- | run prints the probabilities of a distribution
 run :: (Show a, Ord a) => Dist a -> IO ()
