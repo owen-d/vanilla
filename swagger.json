@@ -21,27 +21,18 @@
                 }
             }
         },
-        "Attr": {
-            "minProperties": 1,
-            "maxProperties": 1,
-            "type": "object",
-            "properties": {
-                "SpellCrit": {
-                    "example": [],
-                    "items": {},
-                    "maxItems": 0,
-                    "type": "array"
-                },
-                "SpellHit": {
-                    "example": [],
-                    "items": {},
-                    "maxItems": 0,
-                    "type": "array"
-                },
-                "School": {
-                    "$ref": "#/definitions/School"
-                }
-            }
+        "AttrIdentifier": {
+            "type": "string",
+            "enum": [
+                "SpellHit",
+                "SpellCrit",
+                "Arcane",
+                "Fire",
+                "Frost",
+                "Holy",
+                "Nature",
+                "Shadow"
+            ]
         },
         "SpecIdentifier": {
             "type": "string",
@@ -110,17 +101,6 @@
                     "type": "number"
                 }
             }
-        },
-        "School": {
-            "type": "string",
-            "enum": [
-                "Arcane",
-                "Fire",
-                "Frost",
-                "Holy",
-                "Nature",
-                "Shadow"
-            ]
         }
     },
     "paths": {
@@ -171,7 +151,7 @@
                                 "minItems": 2,
                                 "items": [
                                     {
-                                        "$ref": "#/definitions/Attr"
+                                        "$ref": "#/definitions/AttrIdentifier"
                                     },
                                     {
                                         "format": "float",

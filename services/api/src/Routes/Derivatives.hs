@@ -17,24 +17,28 @@ import qualified Character.Classes.Warlock         as Warlock
 import           Character.Spell                   (Stats (..))
 import           Data.Aeson                        (FromJSON, ToJSON)
 import           Data.Equivalence.Attr             (Attr)
+import qualified Data.Equivalence.Attr             as Attr
+import           Data.Tuple                        (swap)
 import           GHC.Generics                      (Generic)
 import           Servant                           (Server)
 import           Servant.API                       ((:<|>) (..), (:>), JSON,
                                                     Post, ReqBody)
 import           Spells.Calc                       (calc, derivatives)
+import qualified Spells.Spell                      as Spell
 
 type Routes =
-  "equivalence" :> ReqBody '[JSON] ReqFields :> Post '[JSON] [(Attr, Float)]
+  "equivalence" :> ReqBody '[JSON] ReqFields :> Post '[JSON] [(AttrIdentifier, Float)]
   :<|> "dps" :> ReqBody '[JSON] ReqFields :> Post '[JSON] Float
 
 handlers :: Server Routes
 handlers = handleDerivatives
   :<|> handleDPS
 
-handleDerivatives :: Monad m => ReqFields -> m [(Attr, Float)]
+handleDerivatives :: Monad m => ReqFields -> m [(AttrIdentifier, Float)]
 handleDerivatives ReqFields {stats = stats', spec = identifier} =
-  return $ derivatives (toSpec identifier) char
+  return . (map mkAttrId) $ derivatives (toSpec identifier) char
   where
+    mkAttrId = swap . (fmap toAttrId) . swap -- swapping for (a,b)'s functor impl
     char = empty60 {spellStats = stats'}
 
 handleDPS :: Monad m => ReqFields -> m Float
@@ -52,6 +56,45 @@ data ReqFields =
 
 instance FromJSON ReqFields
 instance ToJSON ReqFields
+
+-- | swagger2 has difficulties generating schemas for mixed sum types
+-- (with both unit and non-unit constructors). We circumvent this by
+-- having a verbose intermediary type
+data AttrIdentifier
+  = SpellHit
+  | SpellCrit
+  | Arcane
+  | Fire
+  | Frost
+  | Holy
+  | Nature
+  | Shadow
+  deriving (Show, Generic)
+
+instance FromJSON AttrIdentifier
+instance ToJSON AttrIdentifier
+
+toAttr :: AttrIdentifier -> Attr
+toAttr x = case x of
+  SpellHit  -> Attr.SpellHit
+  SpellCrit -> Attr.SpellCrit
+  Arcane    -> Attr.School Spell.Arcane
+  Fire      -> Attr.School Spell.Fire
+  Frost     -> Attr.School Spell.Frost
+  Holy      -> Attr.School Spell.Holy
+  Nature    -> Attr.School Spell.Nature
+  Shadow    -> Attr.School Spell.Shadow
+
+toAttrId :: Attr -> AttrIdentifier
+toAttrId x = case x of
+ Attr.SpellHit            ->   SpellHit
+ Attr.SpellCrit           ->   SpellCrit
+ Attr.School Spell.Arcane ->   Arcane
+ Attr.School Spell.Fire   ->   Fire
+ Attr.School Spell.Frost  ->   Frost
+ Attr.School Spell.Holy   ->   Holy
+ Attr.School Spell.Nature ->   Nature
+ Attr.School Spell.Shadow ->   Shadow
 
 data SpecIdentifier
   = FireMage

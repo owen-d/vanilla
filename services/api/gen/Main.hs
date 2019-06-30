@@ -5,7 +5,6 @@ import           Character.Spell            (Stats)
 import           Control.Lens
 import           Data.Aeson.Encode.Pretty   (encodePretty)
 import qualified Data.ByteString.Lazy.Char8 as CL
-import           Data.Equivalence.Attr      (Attr)
 import           Data.Swagger
 import           Routes.Derivatives
 import           Servant.Swagger
@@ -18,8 +17,7 @@ instance ToSchema Stats
 
 instance ToSchema School
 
-instance ToSchema Attr where
-  declareNamedSchema = genericDeclareNamedSchemaUnrestricted defaultSchemaOptions
+instance ToSchema AttrIdentifier
 
 instance ToSchema ReqFields
 
