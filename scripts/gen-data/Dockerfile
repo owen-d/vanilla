@@ -25,7 +25,7 @@ RUN git clone https://github.com/brotalnia/database dumprepo
 # 1.11 = 9
 # 1.12 = 10
 ENV PATCH=10
-ENV DUMP_FILE=world_full_26_august_2018
+ENV DUMP_FILE=world_full_08_june_2018
 RUN sed "s/\['patch'\] = 5/\['patch'\] = ${PATCH}/" <aowow/configs/config.php.in >aowow/configs/config.php
 
 RUN mkdir init && cd init && 7z e ../dumprepo/${DUMP_FILE}.7z
@@ -44,6 +44,8 @@ EXPOSE 80
 # it gets dropped when distributing
 CMD service mysql start && \
   echo "CREATE DATABASE mangos; CREATE DATABASE realmd; CREATE USER 'mangos'@'localhost'; GRANT ALL PRIVILEGES ON * . * TO 'mangos'@'localhost';" | mysql && \
+  echo "CREATE TABLE mangos.aowow_comments_wh (id SMALLINT, userid SMALLINT, post_date DATE, commentbody TEXT, replyto SMALLINT, type SMALLINT, typeid SMALLINT);" | mysql && \
+  echo "CREATE TABLE mangos.aowow_comments_alkz (id SMALLINT, userid SMALLINT, post_date DATE, commentbody TEXT, replyto SMALLINT, type SMALLINT, typeid SMALLINT);" | mysql && \
   mysql mangos < ./init/${DUMP_FILE}.sql && \
   mysql mangos < ./aowow/tools/sql/aowow/aowow.sql && \
   mysql mangos < ./aowow/tools/sql/aowow/aowow_zones.sql && \
@@ -51,3 +53,4 @@ CMD service mysql start && \
   mysql realmd < ./aowow/tools/sql/realmd/realmd.sql && \
   echo starting apache... && \
   /usr/sbin/apachectl -DFOREGROUND
+
