@@ -6,6 +6,36 @@
         "description": "This API helps calculate gear effectiveness"
     },
     "definitions": {
+        "DpsResponse": {
+            "required": [
+                "dps",
+                "partialDerivatives"
+            ],
+            "type": "object",
+            "properties": {
+                "dps": {
+                    "format": "float",
+                    "type": "number"
+                },
+                "partialDerivatives": {
+                    "items": {
+                        "minItems": 2,
+                        "items": [
+                            {
+                                "$ref": "#/definitions/AttrIdentifier"
+                            },
+                            {
+                                "format": "float",
+                                "type": "number"
+                            }
+                        ],
+                        "maxItems": 2,
+                        "type": "array"
+                    },
+                    "type": "array"
+                }
+            }
+        },
         "ReqFields": {
             "required": [
                 "stats",
@@ -39,6 +69,7 @@
             "enum": [
                 "FireMage",
                 "FrostMage",
+                "ArcaneMage",
                 "Warlock",
                 "BalanceDruid",
                 "ElementalShaman",
@@ -115,53 +146,7 @@
                     },
                     "200": {
                         "schema": {
-                            "format": "float",
-                            "type": "number"
-                        },
-                        "description": ""
-                    }
-                },
-                "produces": [
-                    "application/json;charset=utf-8"
-                ],
-                "parameters": [
-                    {
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/ReqFields"
-                        },
-                        "in": "body",
-                        "name": "body"
-                    }
-                ]
-            }
-        },
-        "/equivalence": {
-            "post": {
-                "consumes": [
-                    "application/json;charset=utf-8"
-                ],
-                "responses": {
-                    "400": {
-                        "description": "Invalid `body`"
-                    },
-                    "200": {
-                        "schema": {
-                            "items": {
-                                "minItems": 2,
-                                "items": [
-                                    {
-                                        "$ref": "#/definitions/AttrIdentifier"
-                                    },
-                                    {
-                                        "format": "float",
-                                        "type": "number"
-                                    }
-                                ],
-                                "maxItems": 2,
-                                "type": "array"
-                            },
-                            "type": "array"
+                            "$ref": "#/definitions/DpsResponse"
                         },
                         "description": ""
                     }
