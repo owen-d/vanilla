@@ -63,13 +63,13 @@ hero =
     , rangedStats = mempty
     , spellStats =
         mempty
-          { CSp.shadow = 200
-          , CSp.frost = 200
-          , CSp.fire = 200
-          , CSp.arcane = 200
-          , CSp.nature = 200
-          , CSp.crit = 0.15
-          , CSp.hit = 0.04
+          { CSp.shadow = 0
+          , CSp.frost = 0
+          , CSp.fire = 0
+          , CSp.arcane = 0
+          , CSp.nature = 0
+          , CSp.crit = 0.00
+          , CSp.hit = 0.00
           }
     , guild = Nothing
     }

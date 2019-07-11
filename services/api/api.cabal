@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 205f7e8c5e4ddc252f106bd43c3b059f6e85958a35fd12d1c0345264910df445
+-- hash: b92c04b4957ec21b4a8b3c8760fecd06d7b9610af6e56856c80dded41c1145ad
 
 name:           api
 version:        0.1.0.0
@@ -43,6 +43,7 @@ library
     , servant-server
     , string-conv
     , text
+    , wai-cors
     , warp
   default-language: Haskell2010
 
@@ -66,6 +67,7 @@ executable api
     , servant-server
     , string-conv
     , text
+    , wai-cors
     , warp
   default-language: Haskell2010
 
@@ -92,6 +94,7 @@ executable api-swagger
     , string-conv
     , swagger2
     , text
+    , wai-cors
     , warp
   default-language: Haskell2010
 
@@ -122,5 +125,6 @@ test-suite api-test
     , tasty-hunit
     , tasty-quickcheck
     , text
+    , wai-cors
     , warp
   default-language: Haskell2010

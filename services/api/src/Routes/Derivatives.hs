@@ -7,6 +7,7 @@ module Routes.Derivatives where
 
 import           Character                         (Character (spellStats),
                                                     empty60)
+import qualified Character.Classes.ArcaneMage      as ArcaneMage
 import qualified Character.Classes.BalanceDruid    as Boomkin
 import qualified Character.Classes.ElementalShaman as EleSham
 import qualified Character.Classes.FireMage        as FireMage
@@ -21,31 +22,24 @@ import qualified Data.Equivalence.Attr             as Attr
 import           Data.Tuple                        (swap)
 import           GHC.Generics                      (Generic)
 import           Servant                           (Server)
-import           Servant.API                       ((:<|>) (..), (:>), JSON,
-                                                    Post, ReqBody)
+import           Servant.API                       ((:>), JSON, Post, ReqBody)
 import           Spells.Calc                       (calc, derivatives)
 import qualified Spells.Spell                      as Spell
 
 type Routes =
-  "equivalence" :> ReqBody '[JSON] ReqFields :> Post '[JSON] [(AttrIdentifier, Float)]
-  :<|> "dps" :> ReqBody '[JSON] ReqFields :> Post '[JSON] Float
+  "dps" :> ReqBody '[JSON] ReqFields :> Post '[JSON] DpsResponse
 
 handlers :: Server Routes
-handlers = handleDerivatives
-  :<|> handleDPS
+handlers = handleDPS
 
-handleDerivatives :: Monad m => ReqFields -> m [(AttrIdentifier, Float)]
-handleDerivatives ReqFields {stats = stats', spec = identifier} =
-  return . (map mkAttrId) $ derivatives (toSpec identifier) char
-  where
-    mkAttrId = swap . (fmap toAttrId) . swap -- swapping for (a,b)'s functor impl
-    char = empty60 {spellStats = stats'}
-
-handleDPS :: Monad m => ReqFields -> m Float
+handleDPS :: Monad m => ReqFields -> m DpsResponse
 handleDPS ReqFields {stats = stats', spec = identifier} =
-  return $ calc (toSpec identifier) char
+  return $ DpsResponse {dps=dps', partialDerivatives=pDerivs}
   where
     char = empty60 {spellStats = stats'}
+    dps' = calc (toSpec identifier) char
+    mkAttrId = swap . (fmap toAttrId) . swap -- swapping for (a,b)'s functor impl
+    pDerivs = map mkAttrId $ derivatives (toSpec identifier) char
 
 data ReqFields =
   ReqFields
@@ -55,7 +49,15 @@ data ReqFields =
   deriving (Show, Generic)
 
 instance FromJSON ReqFields
-instance ToJSON ReqFields
+
+data DpsResponse =
+  DpsResponse
+    { dps                :: Float
+    , partialDerivatives :: [(AttrIdentifier, Float)]
+    }
+  deriving (Show, Generic)
+
+instance ToJSON DpsResponse
 
 -- | swagger2 has difficulties generating schemas for mixed sum types
 -- (with both unit and non-unit constructors). We circumvent this by
@@ -99,6 +101,7 @@ toAttrId x = case x of
 data SpecIdentifier
   = FireMage
   | FrostMage
+  | ArcaneMage
   | Warlock
   | BalanceDruid
   | ElementalShaman
@@ -113,6 +116,7 @@ toSpec :: SpecIdentifier -> Spec Attr
 toSpec x = case x of
   FireMage        -> FireMage.spec
   FrostMage       -> FrostMage.spec
+  ArcaneMage      -> ArcaneMage.spec
   Warlock         -> Warlock.spec
   BalanceDruid    -> Boomkin.spec
   ElementalShaman -> EleSham.spec

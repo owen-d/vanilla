@@ -32,6 +32,7 @@ dependencies:
 - aeson-casing
 - engine
 - lens
+- wai-cors
 
 
 ghc-options:

@@ -23,6 +23,8 @@ instance ToSchema ReqFields
 
 instance ToSchema SpecIdentifier
 
+instance ToSchema DpsResponse
+
 -- | Swagger spec for Todo API.
 swaggerSpec :: Swagger
 swaggerSpec = toSwagger api
