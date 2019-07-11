@@ -6,7 +6,7 @@
 module LibMain where
 
 import           ApiType
-import           Config                      (Config (Config), fromFile)
+import           Config                      (Config (Config), config)
 import qualified Config                      as Config
 import           Control.Monad.IO.Class      (MonadIO (..))
 import           Control.Monad.Trans.Reader  (ReaderT (..), ask)
@@ -19,7 +19,10 @@ import           Servant                     (serve)
 
 main :: IO ()
 main = do
-  conf <- fromFile "/tmp/conf.json"
+  conf <- config
+  putStrLn $
+    "serving on [" <> show (Config.port conf) <> "] with CORS domains " <>
+    show (Config.corsOrigins conf)
   runReaderT app conf
 
 app :: MonadIO m => ReaderT Config m ()
@@ -47,4 +50,3 @@ withOrigins origins =
     }
   where
     methods = ["GET", "HEAD", "POST", "PUT", "PATCH", "OPTIONS", "DELETE"]
-

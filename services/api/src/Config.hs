@@ -2,9 +2,31 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 module Config where
-import           Data.Aeson
-import qualified Data.Text    as T
-import           GHC.Generics (Generic)
+import           Data.Aeson          (FromJSON (..), Options (..), ToJSON (..),
+                                      camelTo2, defaultOptions,
+                                      eitherDecodeFileStrict, genericParseJSON,
+                                      genericToJSON)
+import qualified Data.Text           as T
+import           GHC.Generics        (Generic)
+import           Options.Applicative (Parser, execParser, fullDesc, helper,
+                                      info, long, progDesc, short, strOption,
+                                      (<**>))
+
+data Args =
+  Args
+    { configFile :: String
+    }
+
+args :: Parser Args
+args = Args <$> strOption (long "config-file" <> short 'c')
+
+cli :: IO Args
+cli = execParser opts
+  where
+    opts = info (args <**> helper) (fullDesc <> progDesc "run api")
+
+config :: IO Config
+config = cli >>= (fromFile . configFile)
 
 data Config =
   Config

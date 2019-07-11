@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 30ac124a7fbe9d0b09c91cd95028a9abb2956527c09147f79db22a1aa8f76a11
+-- hash: 5248278ba966b43a3ff59e6d37517549285b780590287b2b2f035cd35b2799e6
 
 name:           api
 version:        0.1.0.0
@@ -41,6 +41,7 @@ library
     , engine
     , lens
     , mtl
+    , optparse-applicative
     , servant
     , servant-server
     , string-conv
@@ -67,6 +68,7 @@ executable api
     , engine
     , lens
     , mtl
+    , optparse-applicative
     , servant
     , servant-server
     , string-conv
@@ -94,6 +96,7 @@ executable api-swagger
     , engine
     , lens
     , mtl
+    , optparse-applicative
     , servant
     , servant-server
     , servant-swagger
@@ -125,6 +128,7 @@ test-suite api-test
     , generic-random
     , lens
     , mtl
+    , optparse-applicative
     , quickcheck-instances
     , servant
     , servant-server

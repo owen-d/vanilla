@@ -35,6 +35,7 @@ dependencies:
 - wai-cors
 - mtl
 - transformers
+- optparse-applicative
 
 
 ghc-options:
