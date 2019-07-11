@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: b92c04b4957ec21b4a8b3c8760fecd06d7b9610af6e56856c80dded41c1145ad
+-- hash: 30ac124a7fbe9d0b09c91cd95028a9abb2956527c09147f79db22a1aa8f76a11
 
 name:           api
 version:        0.1.0.0
@@ -24,6 +24,7 @@ source-repository head
 library
   exposed-modules:
       ApiType
+      Config
       LibMain
       Routes.Derivatives
   other-modules:
@@ -39,10 +40,12 @@ library
     , containers
     , engine
     , lens
+    , mtl
     , servant
     , servant-server
     , string-conv
     , text
+    , transformers
     , wai-cors
     , warp
   default-language: Haskell2010
@@ -63,10 +66,12 @@ executable api
     , containers
     , engine
     , lens
+    , mtl
     , servant
     , servant-server
     , string-conv
     , text
+    , transformers
     , wai-cors
     , warp
   default-language: Haskell2010
@@ -88,12 +93,14 @@ executable api-swagger
     , containers
     , engine
     , lens
+    , mtl
     , servant
     , servant-server
     , servant-swagger
     , string-conv
     , swagger2
     , text
+    , transformers
     , wai-cors
     , warp
   default-language: Haskell2010
@@ -117,6 +124,7 @@ test-suite api-test
     , engine
     , generic-random
     , lens
+    , mtl
     , quickcheck-instances
     , servant
     , servant-server
@@ -125,6 +133,7 @@ test-suite api-test
     , tasty-hunit
     , tasty-quickcheck
     , text
+    , transformers
     , wai-cors
     , warp
   default-language: Haskell2010

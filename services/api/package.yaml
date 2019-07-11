@@ -33,6 +33,8 @@ dependencies:
 - engine
 - lens
 - wai-cors
+- mtl
+- transformers
 
 
 ghc-options:
