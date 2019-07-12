@@ -1,3 +1,7 @@
+REPO = owend/vanilla
+TAG ?= 0.1.0
+IMAGE = $(REPO):$(TAG)
+
 
 .PHONY: curl
 curl:
@@ -12,3 +16,7 @@ curl-dps:
 .PHONY: swagger
 swagger:
 	stack build api:api-swagger && stack exec -- api-swagger
+
+.PHONY: build-docker
+build-docker:
+	docker build -t $(IMAGE) .
