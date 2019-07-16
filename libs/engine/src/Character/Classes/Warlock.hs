@@ -1,3 +1,5 @@
+{-# LANGUAGE FlexibleContexts #-}
+
 module Character.Classes.Warlock where
 
 import           Character              (Character (spellStats))
@@ -33,11 +35,7 @@ attrs = [SpellHit, SpellCrit, School Shadow]
 -- fix :: (a -> a) -> a
 -- fix f = let {x = f x} in x
 
--- (a -> a)
--- subsituting a = (b -> c)
--- ((b -> c) -> (b -> c)) -> (b -> c)
--- simplify: ((b -> c) -> b -> c) -> b -> c
-
+-- -- examples
 -- z y = fix f y
 --   where
 --     f x =
@@ -51,31 +49,35 @@ attrs = [SpellHit, SpellCrit, School Shadow]
 --          else f (b - 1))
 --   x
 
+-- (a -> a)
+-- subsituting a = (b -> c)
+-- ((b -> c) -> (b -> c)) -> (b -> c)
+-- simplify: ((b -> c) -> b -> c) -> b -> c
 
 {-
 spellDist calculates the fixed point of a spell rotation which includes lifetaps.
 The idea is that for a given spell distribution, you can calculate how many lifetaps are required
-to break even. Addingthose to the distribution alters it, though. Thus, we use the y-combinator
+to break even. Adding those to the distribution alters it, though. Thus, we use the y-combinator
 to calculat the fixed point, iteratively adjusting the distribution until we reach an acceptable
 threshold of accuracy.
 -}
 spellDist :: Float -> Dist (Spell Character)
-spellDist spellDmg
-  -- store (spellDist,reserved time for lifetapping)
- =
-  flip fix ((spellDistWithReserved spellPrios 0), 0) $ \f (Dist xs, reserved) ->
-    let totalCost = sum $ map (\(x, p) -> p * manaCost x) xs
-        perTap = 504 + 0.8 * spellDmg -- mana gained per lifetap
-        lifetaps cost = cost / perTap -- # of lifetaps required to gain x mana
-        tapsIn t = t / castTime lifeTap -- # of life taps in a period t
-        manaReserved = tapsIn reserved * perTap -- mana gained from lifetapping w/ reserved time
-        reservedDiff = lifetaps (manaReserved - totalCost) * castTime lifeTap -- num lifetaps to add/subtract to hit new distribution
-        reserved' = reserved - reservedDiff -- how much to reserve next attempt
-        finished = abs reservedDiff < 0.001 -- arbitrary finished threshold
+spellDist spellDmg =
+  fix approximate initialDist
+  where
+    initialDist = ((spellDistWithReserved spellPrios 0), 0)
+    approximate recur (Dist xs, reserved) =
+     let totalCost = sum $ map (\(x, p) -> p * manaCost x) xs
+         perTap = 504 + 0.8 * spellDmg -- mana gained per lifetap
+         lifetaps cost = cost / perTap -- # of lifetaps required to gain x mana
+         tapsIn t = t / castTime lifeTap -- # of life taps in a period t
+         manaReserved = tapsIn reserved * perTap -- mana gained from lifetapping w/ reserved time
+         reservedDiff = lifetaps (manaReserved - totalCost) * castTime lifeTap -- num lifetaps to add/subtract to hit new distribution
+         reserved' = reserved - reservedDiff -- how much to reserve next attempt
+         finished = abs reservedDiff < 0.001 -- arbitrary finished threshold
      in if finished
-          then Dist $ xs ++ [(lifeTap, tapsIn reserved)] -- add lifetaps into reserved space
-          else f (spellDistWithReserved spellPrios reserved', reserved')
-
+        then Dist $ xs ++ [(lifeTap, tapsIn reserved)] -- add lifetaps into reserved space
+        else recur (spellDistWithReserved spellPrios reserved', reserved')
 
 -- 504 healing w/ imp lifetap 20%
 -- hack: classify as Harmful Buff b/c we don't currently have a way to cast helpful spells
