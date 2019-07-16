@@ -39,10 +39,10 @@ spellTalents s@Spell { critBonus = crit'
     , hitBonus = hit' + 0.03
     , manaCost = mana' * 0.95 * 0.9
     , critCoeff = 2
-    , castTime = minCast
+    , castTime = floorCast
     }
   where
-    minCast = min (cast' - 1) 1.5
+    floorCast = max (cast' - 1) 1.5 -- cannot be lower than gcd
 
 attrs :: [Attr]
 attrs = [SpellHit, SpellCrit, School Nature]
