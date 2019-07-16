@@ -40,8 +40,5 @@ frostBolt =
     , manaCost = 290
     , dmg = 535.5
     , coeff = 3 / 3.5
-    , hitBonus = 0.06
-    , critBonus = 0.10 -- winter's chill
-    , critCoeff = 2
     , castTime = 2.5
     }
