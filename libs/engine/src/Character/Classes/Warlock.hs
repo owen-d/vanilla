@@ -26,6 +26,7 @@ spec =
 buffs :: Fractional a => a -> a
 buffs y = y * (1 + 0.15 + 0.1 + 0.1) -- shadow weaving + curse of shadows + shadow mastery
 
+
 spellPrios :: [Spell Character]
 spellPrios = [curseOfDoom, shadowBolt]
 
@@ -58,13 +59,15 @@ attrs = [SpellHit, SpellCrit, School Shadow]
 spellDist calculates the fixed point of a spell rotation which includes lifetaps.
 The idea is that for a given spell distribution, you can calculate how many lifetaps are required
 to break even. Adding those to the distribution alters it, though. Thus, we use the y-combinator
-to calculat the fixed point, iteratively adjusting the distribution until we reach an acceptable
+to calculate the fixed point, iteratively adjusting the distribution until we reach an acceptable
 threshold of accuracy.
 -}
 spellDist :: Float -> Dist (Spell Character)
 spellDist spellDmg =
   fix approximate initialDist
   where
+    -- initialDist represents the initial spell distribution with 0 lifetaps
+    -- and 0 reserved seconds of casting lifetap in a cycle (curse of doom duration)
     initialDist = ((spellDistWithReserved spellPrios 0), 0)
     approximate recur (Dist xs, reserved) =
      let totalCost = sum $ map (\(x, p) -> p * manaCost x) xs
