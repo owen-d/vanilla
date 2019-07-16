@@ -21,10 +21,12 @@ spec =
 buffs' :: Float
 buffs' = buffs + 0.03 -- arcane instability percent dmg
 
+-- | spellTalents adds the crit % bonus from Arcane Instability
+spellTalents :: Spell a -> Spell a
+spellTalents s@Spell {critBonus = crit'} = s {critBonus = crit' + 0.03}
+
 spellPrios' :: [Spell Character]
-spellPrios' = map f spellPrios
-  where
-    f spell = spell{critBonus = critBonus spell + 0.03 } -- arcane instability crit
+spellPrios' = map spellTalents spellPrios
 
 buffScale' :: Float -> Float
 buffScale' y = sum [uptime * y * (buffs' + 0.3), downtime * y * buffs']

@@ -25,8 +25,15 @@ attrs = [SpellHit, SpellCrit, School Frost]
 spellPrios :: [Spell Character]
 spellPrios = [frostBolt]
 
+-- | spellTalents adds the hit % bonus from Elemental Precision,
+-- the crit bonus from Winter's Chill, and the crit coefficient from Ice Shards
+spellTalents :: Spell a -> Spell a
+spellTalents s@Spell {hitBonus = hit', critBonus = crit'} =
+  s {hitBonus = hit' + 0.06, critBonus = crit' + 0.1, critCoeff=2}
+
 frostBolt :: Spell Character
 frostBolt =
+  spellTalents $
   empty
     { school = Frost
     , sClass = Harmful Direct

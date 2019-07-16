@@ -52,12 +52,12 @@ data Spell a =
     , sClass          :: SpellClass
     , manaCost        :: Float
     , cooldown        :: Float
-    , hitBonus        :: Float
+    , hitBonus        :: Float -- fractional (i.e. 10% -> 0.1)
     , dmg             :: Float
     , healing         :: Float
     , duration        :: Float
     , coeff           :: Float
-    , critBonus       :: Float
+    , critBonus       :: Float -- fractional (i.e. 10% -> 0.1)
     , critCoeff       :: Float
     , castTime        :: Float
     , critFlatBonuses :: [Float] -- added on to the end result. Used to simulate buffs like imp shadowbolt

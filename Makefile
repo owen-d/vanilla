@@ -20,3 +20,7 @@ swagger:
 .PHONY: build-docker
 build-docker:
 	docker build -t $(IMAGE) .
+
+.PHONY: deploy-docker
+deploy-docker: build-docker
+	docker push $(IMAGE)

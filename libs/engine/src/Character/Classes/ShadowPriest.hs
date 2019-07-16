@@ -29,8 +29,13 @@ buffs y = y * (1 + 0.15 + 0.1 + 0.15) -- shadow weaving + curse of shadows + sha
 attrs :: [Attr]
 attrs = [SpellHit, SpellCrit, School Shadow]
 
+-- | spellTalents adds the hit talent (Shadow focus) to a spell
+spellTalents :: Spell a -> Spell a
+spellTalents s@Spell {hitBonus = hit'} = s {hitBonus = hit' + 0.1}
+
 mindBlast :: Spell Character
 mindBlast =
+  spellTalents $
   empty
     { school = Shadow
     , sClass = Harmful Direct
@@ -43,6 +48,7 @@ mindBlast =
 
 mindFlay :: Spell Character
 mindFlay =
+  spellTalents $
   empty
     { school = Shadow
     , sClass = Harmful Duration
@@ -51,4 +57,3 @@ mindFlay =
     , coeff = 3 / 3.5
     , castTime = 3
     }
-

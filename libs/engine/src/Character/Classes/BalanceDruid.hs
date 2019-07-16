@@ -29,16 +29,21 @@ spellPrios = [starfire]
 attrs :: [Attr]
 attrs = [SpellHit, SpellCrit, School Arcane]
 
+-- | spellTalents adds the crit coefficient (Vengeance) to a spell as well as
+-- the benefit of moonkin aura (applied to an entire caster group but credited here to moonkin)
+spellTalents :: Spell a -> Spell a
+spellTalents s@Spell {critBonus = crit'} =
+  s {critBonus = crit' + 0.15, critCoeff=2}
+
 starfire :: Spell Character
 starfire =
+  spellTalents $
   empty
     { school = Arcane
     , sClass = Harmful Direct
     , manaCost = 340
     , dmg = 540.5 -- weird, way lower than fireball (same lvl/cast time)
     , coeff = 3.5 / 3.5
-    , critBonus = 0.15 -- moonkin aura (applied to an entire caster group but credited here to moonkin)
-    , critCoeff = 2 -- Vengeance
     , castTime = 3
     , modifiers = mkModifiers [naturesGrace]
     }

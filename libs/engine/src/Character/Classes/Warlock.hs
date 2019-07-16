@@ -103,8 +103,8 @@ shadowBolt =
     , manaCost = 380
     , dmg = 510.5
     , coeff = 3 / 3.5
-    , critBonus = 0.05
-    , critCoeff = 2
+    , critBonus = 0.05 -- Devastation
+    , critCoeff = 2 -- Ruin
     , castTime = 2.5
     , modifiers = mkModifiers [improvedSbMod]
     }
