@@ -61,15 +61,16 @@ hero =
     , defenses = mempty
     , meleeStats = mempty
     , rangedStats = mempty
-    , spellStats =
-        mempty
-          { CSp.shadow = 0
-          , CSp.frost = 0
-          , CSp.fire = 0
-          , CSp.arcane = 0
-          , CSp.nature = 0
-          , CSp.crit = 0.00
-          , CSp.hit = 0.00
-          }
+    , spellStats = (allDmg 300) {CSp.crit = 0.1, CSp.hit = 0.1}
     , guild = Nothing
+    }
+
+allDmg :: Float -> CSp.Stats
+allDmg x =
+  mempty
+    { CSp.shadow = x
+    , CSp.frost = x
+    , CSp.fire = x
+    , CSp.arcane = x
+    , CSp.nature = x
     }
