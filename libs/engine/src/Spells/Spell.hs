@@ -27,10 +27,16 @@ instance ToJSON School where
 
 
 
-data SType = Direct | Duration | Buff
+data SType
+  = Direct
+  | Channeled
+  | Duration
+  | Buff
   deriving (Eq, Ord, Show, Generic)
 
-data SpellClass = Harmful SType | Helpful SType
+data SpellClass
+  = Harmful SType
+  | Helpful SType
   deriving (Eq, Ord, Show, Generic)
 
 direct :: SpellClass

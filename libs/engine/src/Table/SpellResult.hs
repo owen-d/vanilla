@@ -8,7 +8,6 @@ import           Character.Resistances (resistance)
 import           Character.Spell       (spellPower)
 import qualified Character.Spell       as CSp
 import           Dist                  (Dist (..), coalesceWith, softmax)
-
 import           GHC.Generics          (Generic)
 import           Spells.Spell          (Modifier (..), SType (..), Spell (Spell, castTime, cooldown, duration),
                                         SpellClass (..), beneficial)
@@ -84,7 +83,8 @@ harmfulCast s caster enemy@ Character{resistances=resists}=
   case variant of
   Helpful _      -> fail "requires a harmful spell"
   Harmful Direct -> mitigate [miss, hits, crits]
-  Harmful _      -> mitigate [miss, hits]
+  -- reintroduce crit % as hits for uncrittable spells
+  Harmful _      -> mitigate [miss, hits, fmap (const pCrit) hits]
   where
     spell@ Spell{Sp.sClass=variant, Sp.school=school', Sp.critFlatBonuses=cfbs} = modify s caster enemy
     pHit = hitChance caster spell enemy
